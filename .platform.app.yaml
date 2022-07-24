@@ -1,0 +1,22 @@
+name: app
+
+type: "java:14"
+
+disk: 1024
+
+hooks:
+    build: './sbt app/stage'
+
+relationships:
+    database: "db:postgresql"
+
+variables:
+    env:
+        RELEASE: 'yesh'
+        JAVA_OPTS: '-Xmx3G'
+        SMITHY_VERSION: '0.13.0'
+
+web:
+    commands:
+        start: modules/app/target/jvm-3/universal/stage/bin/app $PORT -J-Xmx$(jq .info.limits.memory /run/config.json)m -J-XX:+ExitOnOutOfMemoryError 
+

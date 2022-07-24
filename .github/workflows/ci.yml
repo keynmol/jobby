@@ -1,0 +1,47 @@
+name: CI
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["*"]
+
+env:
+  RELEASE: yesh
+
+jobs:
+  build:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: coursier/cache-action@v6
+
+      - uses: actions/setup-java@v2
+        with:
+          distribution: 'temurin' 
+          java-version: '17'
+
+      - name: Run Unit and Stub tests
+        run: sbt --client fastTests
+
+      - name: Run Integration tests
+        run: sbt --client integrationTests
+
+      - name: Monitor bundle size
+        run: sbt --client frontendJS/bundleMon
+ 
+      - name: Deploy
+        if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main')        
+        env:
+          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
+          HEROKU_DEV_APP_NAME: ${{ secrets.HEROKU_DEV_APP_NAME }}
+        run: | 
+          sbt --client app/Docker/publishLocal
+          # SECURITY YO
+          curl https://cli-assets.heroku.com/install.sh | sh
+          heroku container:login
+          docker tag jobby-smithy4s:0.1.0-SNAPSHOT registry.heroku.com/$HEROKU_DEV_APP_NAME/web
+          docker push registry.heroku.com/$HEROKU_DEV_APP_NAME/web 
+          heroku container:release web -a $HEROKU_DEV_APP_NAME
