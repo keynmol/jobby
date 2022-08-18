@@ -79,7 +79,10 @@ object Page:
     serializePage = pg => pg.asJson.noSpaces,
     deserializePage = str =>
       io.circe.scalajs.decodeJs[Page](JSON.parse(str)).fold(throw _, identity)
-  )($popStateEvent = L.windowEvents.onPopState, owner = L.unsafeWindowOwner)
+  )(
+    $popStateEvent = L.windowEvents.onPopState,
+    owner = L.unsafeWindowOwner
+  )
 end Page
 
 def navigateTo(page: Page)(using router: Router[Page]): Binder[HtmlElement] =

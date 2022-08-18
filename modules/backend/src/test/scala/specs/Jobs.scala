@@ -71,7 +71,6 @@ trait JobsSuite:
       nope3 <- api.jobs
         .deleteJob(AuthHeader("Bearer bla"), bumBook_Job3.id)
         .attempt
-      _ <- IO.println(s"$nope, $nope2, $nope3")
     yield expect.all(
       nope == Left(ForbiddenError()),
       nope2 == Left(ForbiddenError()),
