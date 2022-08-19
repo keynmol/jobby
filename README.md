@@ -1,19 +1,33 @@
 # Jobby
 
-Not all the bits are currently in place. 
+This is a full-stack Scala application (job posting board), made with the following excellent libraries and technologies:
 
+1. [Scala 3](https://docs.scala-lang.org/scala3/new-in-scala3.html)
+2. [Smithy4s](https://disneystreaming.github.io/smithy4s/) and [Smithy](https://awslabs.github.io/smithy/2.0/index.html#) for the API and protocol 
+   definition between backend and frontend (and in tests)
+3. [Scala.js](https://www.scala-js.org) and [Laminar](https://laminar.dev) for the [SPA](https://en.wikipedia.org/wiki/Single-page_application) frontend
+4. [PostgreSQL](https://www.postgresql.org) and [Skunk](https://tpolecat.github.io/skunk/) for database access 
+5. [Weaver-Test](https://disneystreaming.github.io/weaver-test/) for unit and integration testing
+
+The entire app is auto-deployed to [Heroku](https://heroku.com), you can see the **live version [here](https://jobby-smithy4s.herokuapp.com)**
+(_note that it is on a free plan, so the app might be asleep, and will take longer to load at first)_
+
+![Demo of the Jobby App](https://blog.indoorvivants.com/assets/smithy-fullstack/demo.gif)
 
 ### Prerequisites
 
-Just postgres.
+- JDK 11+
 
-Easiest way to run it is:
+- SBT installed (or use the `./sbt` launcher provided)
 
-```
-docker run -p 5432:5432 -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=jobby -d postgres
-```
+- PostgreSQL
+  Easiest way to run it is:
 
-Take note of the password (`mysecretpassword`) and database (`jobby`), you will need to configure the app .
+   ```
+   docker run -p 5432:5432 -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=jobby -d postgres
+   ```
+
+  Take note of the password (`mysecretpassword`) and database (`jobby`), you will need to configure the app .
 
 ### Running
 
