@@ -7,6 +7,7 @@ on:
 
 env:
   RELEASE: yesh
+  JAVA_OPTS: "-Xmx4G"
 
 jobs:
   build:
