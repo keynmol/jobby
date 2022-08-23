@@ -12,6 +12,8 @@ This is a full-stack Scala application (job posting board), made with the follow
 The entire app is auto-deployed to [Heroku](https://heroku.com), you can see the **live version [here](https://jobby-smithy4s.herokuapp.com)**
 (_note that it is on a free plan, so the app might be asleep, and will take longer to load at first)_
 
+It's a companion repo for my [4-part blog post series](https://blog.indoorvivants.com/2022-06-10-smithy4s-fullstack-part-1)
+
 ![Demo of the Jobby App](https://user-images.githubusercontent.com/1052965/185575996-2c524e44-d9c6-402d-b2c9-76d2b7b20356.gif)
 
 ### Prerequisites
