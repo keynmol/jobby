@@ -5,6 +5,10 @@ on:
   pull_request:
     branches: ["*"]
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 env:
   RELEASE: yesh
   JAVA_OPTS: "-Xmx4G"
