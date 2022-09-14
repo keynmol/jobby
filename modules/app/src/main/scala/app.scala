@@ -19,7 +19,10 @@ def migrate(postgres: PgCredentials) =
       .flatMap { f =>
         val migrate = IO(f.migrate()).void
         val repair  = IO(f.repair()).void
+        val info = IO.println(MigrationInfoDumper.dumpToAsciiTable(f.info().all()) )
 
+        IO.println("Migration Info") >>
+        info >>
         migrate.handleErrorWith {
           case _: FlywayValidateException =>
             repair.redeemWith[Unit](
