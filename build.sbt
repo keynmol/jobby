@@ -21,7 +21,7 @@ val Versions = new {
   val waypoint       = "0.5.0"
   val scalacss       = "1.0.0"
   val monocle        = "3.1.0"
-  val circe          = "0.14.2"
+  val circe          = "0.14.3"
 }
 
 lazy val root = project
