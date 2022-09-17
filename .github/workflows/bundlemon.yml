@@ -1,0 +1,27 @@
+name: Bundlemon
+on:
+  push:
+    branches: ["main"]
+  pull_request:
+    branches: ["*"]
+
+env:
+  RELEASE: yesh
+  JAVA_OPTS: "-Xmx4G"
+
+jobs:
+  bundlemon:
+    strategy:
+      fail-fast: false
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-java@v3
+        with:
+          distribution: 'temurin' 
+          java-version: '17'
+          cache: sbt
+
+      - name: Monitor frontend bundle
+        run: sbt --client frontendJS/bundleMon
