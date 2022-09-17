@@ -15,20 +15,22 @@ jobs:
       fail-fast: false
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v3
 
-      - uses: coursier/cache-action@v6
-
-      - uses: actions/setup-java@v2
+      - uses: actions/setup-java@v3
         with:
           distribution: 'temurin' 
           java-version: '17'
+          cache: sbt
 
       - name: Run Unit and Stub tests
         run: sbt --client fastTests
 
       - name: Run Integration tests
         run: sbt --client integrationTests
+
+      - name: Monitor frontend bundle
+        run: sbt --client frontendJS/bundleMon
 
       - name: Deploy
         if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main')        
