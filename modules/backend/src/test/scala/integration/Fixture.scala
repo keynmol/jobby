@@ -24,7 +24,7 @@ object Fixture:
   private def postgresContainer =
     val start = IO(
       PostgreSQLContainer(
-        dockerImageNameOverride = DockerImageName("postgres:12"),
+        dockerImageNameOverride = DockerImageName("postgres:14"),
         mountPostgresDataToTmpfs = true
       )
     ).flatTap(cont => IO(cont.start()))
