@@ -84,17 +84,17 @@ object Fixture:
     silenceOfTheLogs.foreach { log =>
       Logger(log).withMinimumLevel(Level.Error).replace()
     }
-    // val mw =
-    //   RequestLogger
-    //     .httpApp[IO](true, true, logAction = Some(f => IO.println(f)))
+    val mw =
+      RequestLogger
+        .httpApp[IO](true, true, logAction = Some(f => IO.println(f)))
 
-    // val rw =
-    //   ResponseLogger
-    //     .httpApp[IO, Request[IO]](
-    //       true,
-    //       true,
-    //       logAction = Some(f => IO.println(f.take(500)))
-    //     )
+    val rw =
+      ResponseLogger
+        .httpApp[IO, Request[IO]](
+          true,
+          true,
+          logAction = Some(f => IO.println(f.take(500)))
+        )
 
     for
       shutdownLatch <- Resource.eval(IO.ref(false))
@@ -125,8 +125,8 @@ object Fixture:
         }
       }
       uri <- BlazeServerBuilder[IO]
-        // .withHttpApp(rw(mw(latchedRoutes)))
-        .withHttpApp(latchedRoutes)
+        .withHttpApp(rw(mw(latchedRoutes)))
+        // .withHttpApp(latchedRoutes)
         .bindHttp(0, "localhost")
         .resource
         .map(_.baseUri)
