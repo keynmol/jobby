@@ -23,12 +23,14 @@ object Fixture:
 
   private def postgresContainer =
     val start = IO(
-      PostgreSQLContainer(dockerImageNameOverride =
-        DockerImageName("postgres:14")
+      PostgreSQLContainer(
+        dockerImageNameOverride = DockerImageName("postgres:12"),
+        mountPostgresDataToTmpfs = true
       )
     ).flatTap(cont => IO(cont.start()))
 
     Resource.make(start)(cont => IO(cont.stop()))
+  end postgresContainer
 
   private def migrate(url: String, user: String, password: String) =
     IO(Flyway.configure().dataSource(url, user, password).load()).flatMap { f =>
@@ -110,9 +112,9 @@ object Fixture:
   )
 
   val skunk = SkunkConfig(
-    maxSessions = 10,
+    maxSessions = 1,
     strategy = Strategy.SearchPath,
-    debug = false
+    debug = true
   )
 
   import com.comcast.ip4s.*

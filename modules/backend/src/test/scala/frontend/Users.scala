@@ -10,6 +10,7 @@ import org.http4s.*
 import natchez.Trace.Implicits.noop
 import cats.syntax.all.*
 import weaver.*
+import cats.effect.*
 
 case class Resources(
     probe: Probe,
