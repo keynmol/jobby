@@ -17,6 +17,15 @@ import skunk.util.Typer.Strategy
 import org.http4s.ember.server.EmberServerBuilder
 import scribe.cats.*
 import org.http4s.blaze.server.*
+import org.http4s.server.middleware.RequestLogger
+import org.http4s.HttpRoutes.apply
+import org.http4s.HttpRoutes
+import org.http4s.HttpApp
+import org.http4s.Status.apply
+import org.http4s.server.middleware.ResponseLogger.apply
+import org.http4s.server.middleware.ResponseLogger
+import org.http4s.Request
+import cats.effect.kernel.Ref
 
 object Fixture:
   private def parseJDBC(url: String) = IO(java.net.URI.create(url.substring(5)))
@@ -29,7 +38,7 @@ object Fixture:
       )
     ).flatTap(cont => IO(cont.start()))
 
-    Resource.make(start)(cont => IO(cont.stop()))
+    Resource.make(start)(cont => IO(cont.stop())).onFinalizeCase(ex => IO.println(s"Shutting down testcontainer $ex"))
   end postgresContainer
 
   private def migrate(url: String, user: String, password: String) =
@@ -53,7 +62,11 @@ object Fixture:
           ssl = false
         )
 
-        SkunkDatabase.load(pgConfig, skunk).map(pgConfig -> _)
+        SkunkDatabase
+          .load(pgConfig, skunk)
+          .onFinalizeCase(ex => IO.println(s"shutting down skunk... $ex"))
+          .map(pgConfig -> _)
+
       }
 
   def resource(using natchez.Trace[IO]): Resource[cats.effect.IO, Probe] =
@@ -63,15 +76,28 @@ object Fixture:
         "org.http4s",
         "org.flywaydb.core",
         "org.testcontainers",
-        "🐳 [postgres:14]"
+        "🐳 [postgres:14]",
+        "🐳 [testcontainers/ryuk:0.3.3]"
       )
 
     silenceOfTheLogs.foreach { log =>
       Logger(log).withMinimumLevel(Level.Error).replace()
     }
+    val mw =
+      RequestLogger
+        .httpApp[IO](true, true, logAction = Some(f => IO.println(f)))
+
+    val rw =
+      ResponseLogger
+        .httpApp[IO, Request[IO]](
+          true,
+          true,
+          logAction = Some(f => IO.println(f.take(500)))
+        )
 
     for
-      res <- skunkConnection
+      shutdownLatch <- Resource.eval(IO.ref(false))
+      res           <- skunkConnection
       pgConfig  = res._1
       db        = res._2
       appConfig = AppConfig(pgConfig, skunk, http, jwt, misc)
@@ -84,12 +110,29 @@ object Fixture:
         logger.scribeLogger,
         timeCop
       ).routes
+      latchedRoutes = HttpApp[IO] { case req =>
+        shutdownLatch.get.flatMap { deadSkunk =>
+          println(deadSkunk)
+          if deadSkunk then
+            IO.pure(
+              org.http4s
+                .Response[IO](
+                  org.http4s.Status.InternalServerError
+                )
+                .withEntity("Skunk is dead, stop sending requests!")
+            )
+          else routes.run(req)
+        }
+      }
       uri <- BlazeServerBuilder[IO]
-        .withHttpApp(routes)
-        .bindHttp()
+        .withHttpApp(rw(mw(latchedRoutes)))
+        .bindHttp(0, "localhost")
         .resource
         .map(_.baseUri)
-      client <- BlazeClientBuilder[IO].resource
+        .onFinalizeCase(ex => IO.println(s"shutting down server... $ex"))
+      client <- BlazeClientBuilder[IO].resource.onFinalize(
+        IO.println("why") *> shutdownLatch.set(true)
+      )
       probe <-
         Probe.build(
           client,
@@ -112,9 +155,9 @@ object Fixture:
   )
 
   val skunk = SkunkConfig(
-    maxSessions = 1,
+    maxSessions = 10,
     strategy = Strategy.SearchPath,
-    debug = true
+    debug = false
   )
 
   import com.comcast.ip4s.*

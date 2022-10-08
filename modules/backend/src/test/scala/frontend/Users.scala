@@ -23,8 +23,9 @@ class UsersSpec(global: GlobalRead) extends FrontendSuite(global):
       for
         _ <- pc.page(_.navigate(pb.probe.serverUri.toString))
 
-        _ <- eventually(pc.page(_.title())) { title =>
-          expect.same(title, "Jobby: latest")
+        _ <- eventually(IO.println("comparison") *> pc.page(_.title())) {
+          title =>
+            expect.same(title, "Jobby: latest")
         }
       yield success
     }

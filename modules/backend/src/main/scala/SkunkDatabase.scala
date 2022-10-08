@@ -27,6 +27,7 @@ object SkunkDatabase:
         debug = skunkConfig.debug,
         ssl = if postgres.ssl then skunk.SSL.Trusted else skunk.SSL.None
       )
+      .onFinalizeCase(ex => IO.println(s"shutting down skunk pool... $ex"))
       .map(SkunkDatabase(_))
   end load
 end SkunkDatabase
@@ -40,11 +41,14 @@ class SkunkDatabase(sess: Resource[IO, Session[IO]]) extends Database:
 
   def stream[I, O](query: SqlQuery[I, O]): fs2.Stream[IO, O] =
     for
-      sess     <- fs2.Stream.resource(sess)
+      sess <- fs2.Stream.resource(sess)
+      _ = println(sess)
       prepared <- fs2.Stream.resource(query.prepare(sess))
-      q        <- prepared.stream(query.input, 128)
+      _ = println(prepared)
+      q <- prepared.stream(query.input, 128)
     yield q
 
   override def vector[I, O](query: SqlQuery[I, O]): IO[Vector[O]] =
-    stream(query).compile.toVector
+    IO.println("get ready bruv") *>
+      stream(query).compile.toVector
 end SkunkDatabase
