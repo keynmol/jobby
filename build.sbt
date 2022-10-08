@@ -33,9 +33,9 @@ val Config = new {
 
 lazy val root = project
   .in(file("."))
-  .aggregate(
-    (backend.projectRefs ++ shared.projectRefs ++ frontend.projectRefs)*
-  )
+  .aggregate(backend.projectRefs)
+  .aggregate(shared.projectRefs)
+  .aggregate(frontend.projectRefs)
 
 resolvers +=
   "Sonatype S01 OSS Snapshots" at "https://s01.oss.sonatype.org/content/repositories/snapshots"
