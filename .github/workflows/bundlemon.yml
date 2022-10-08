@@ -24,4 +24,4 @@ jobs:
           cache: sbt
 
       - name: Monitor frontend bundle
-        run: sbt --client frontendJS/bundleMon
+        run: sbt --client frontend-bundle/bundleMon
