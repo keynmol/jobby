@@ -5,23 +5,30 @@ import smithy4s.codegen.Smithy4sCodegenPlugin
 Global / onChangedBuildSource := ReloadOnSourceChanges
 
 val Versions = new {
-  val http4sBlaze    = "0.23.12"
-  val http4s         = "0.23.16"
-  val Scala          = "3.2.0"
-  val skunk          = "0.3.2"
-  val upickle        = "2.0.0"
-  val scribe         = "3.10.3"
-  val http4sDom      = "0.2.3"
-  val jwt            = "9.1.1"
-  val Flyway         = "9.4.0"
-  val Postgres       = "42.5.0"
-  val TestContainers = "0.40.10"
-  val Weaver         = "0.8.0"
-  val Laminar        = "0.14.5"
-  val waypoint       = "0.5.0"
-  val scalacss       = "1.0.0"
-  val monocle        = "3.1.0"
-  val circe          = "0.14.3"
+  val http4sBlaze      = "0.23.12"
+  val http4s           = "0.23.16"
+  val Scala            = "3.2.0"
+  val skunk            = "0.3.2"
+  val upickle          = "2.0.0"
+  val scribe           = "3.10.3"
+  val http4sDom        = "0.2.3"
+  val jwt              = "9.1.1"
+  val Flyway           = "9.4.0"
+  val Postgres         = "42.5.0"
+  val TestContainers   = "0.40.10"
+  val Weaver           = "0.8.0"
+  val WeaverPlaywright = "0.0.4"
+  val Laminar          = "0.14.5"
+  val waypoint         = "0.5.0"
+  val scalacss         = "1.0.0"
+  val monocle          = "3.1.0"
+  val circe            = "0.14.3"
+}
+
+val Config = new {
+  val DockerImageName = "jobby-smithy4s"
+  val DockerBaseImage = "eclipse-temurin:17"
+  val BasePackage     = "jobby"
 }
 
 lazy val root = project
@@ -42,8 +49,8 @@ lazy val app = projectMatrix
   .settings(
     scalaVersion            := Versions.Scala,
     Compile / doc / sources := Seq.empty,
-    dockerBaseImage         := "eclipse-temurin:17",
-    Docker / packageName    := "jobby-smithy4s",
+    dockerBaseImage         := Config.DockerBaseImage,
+    Docker / packageName    := Config.DockerImageName,
     libraryDependencies ++= Seq(
       "org.http4s"    %% "http4s-blaze-server" % Versions.http4sBlaze,
       "org.http4s"    %% "http4s-ember-server" % Versions.http4s,
@@ -51,27 +58,27 @@ lazy val app = projectMatrix
       "org.flywaydb"   % "flyway-core"         % Versions.Flyway
     ),
     Compile / resourceGenerators += {
-      if (isRelease)
-        Def.task[Seq[File]] {
-          val (_, location) = (ThisBuild / frontendOutput).value
-
-          val outDir = (Compile / resourceManaged).value / "assets"
-          IO.listFiles(location).toList.map { file =>
-            val (name, ext) = file.baseAndExt
-            val out         = outDir / (name + "." + ext)
-
-            IO.copyFile(file, out)
-
-            out
-          }
-        }
-      else Def.task { Seq.empty[File] }
+      Def.task[Seq[File]] {
+        copyAll(
+          frontendBundle.value,
+          (Compile / resourceManaged).value / "assets"
+        )
+      }
     },
-    testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
-    Test / fork             := true,
     reStart / baseDirectory := (ThisBuild / baseDirectory).value,
     run / baseDirectory     := (ThisBuild / baseDirectory).value
   )
+
+def copyAll(location: File, outDir: File) = {
+  IO.listFiles(location).toList.map { file =>
+    val (name, ext) = file.baseAndExt
+    val out         = outDir / (name + "." + ext)
+
+    IO.copyFile(file, out)
+
+    out
+  }
+}
 
 lazy val backend = projectMatrix
   .in(file("modules/backend"))
@@ -94,6 +101,7 @@ lazy val backend = projectMatrix
     libraryDependencies ++=
       Seq(
         "com.dimafeng" %% "testcontainers-scala-postgresql" % Versions.TestContainers,
+        "com.indoorvivants.playwright" %% "weaver" % Versions.WeaverPlaywright,
         "com.disneystreaming" %% "weaver-cats"         % Versions.Weaver,
         "com.disneystreaming" %% "weaver-scalacheck"   % Versions.Weaver,
         "org.http4s"          %% "http4s-blaze-server" % Versions.http4sBlaze,
@@ -104,7 +112,15 @@ lazy val backend = projectMatrix
         "org.flywaydb"         % "flyway-core"         % Versions.Flyway
       ).map(_ % Test),
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
-    Test / fork := true
+    Test / fork := true,
+    Test / resourceGenerators += {
+      Def.task[Seq[File]] {
+        copyAll(
+          frontendBundle.value,
+          (Test / resourceManaged).value / "assets"
+        )
+      }
+    }
   )
 
 lazy val shared = projectMatrix
@@ -123,19 +139,30 @@ lazy val shared = projectMatrix
 
 lazy val frontend = projectMatrix
   .in(file("modules/frontend"))
-  .jsPlatform(Seq(Versions.Scala))
-  .defaultAxes(defaults*)
+  .customRow(
+    Seq(Versions.Scala),
+    axisValues = Seq(VirtualAxis.js, BuildStyle.SingleFile),
+    Seq.empty
+  )
+  .customRow(
+    Seq(Versions.Scala),
+    axisValues = Seq(VirtualAxis.js, BuildStyle.Modules),
+    Seq.empty
+  )
+  .defaultAxes((defaults :+ VirtualAxis.js)*)
   .dependsOn(shared)
   .enablePlugins(ScalaJSPlugin, BundleMonPlugin)
   .settings(
     scalaJSUseMainModuleInitializer := true,
-    scalaJSLinkerConfig ~= { config =>
+    scalaJSLinkerConfig := {
+      val config = scalaJSLinkerConfig.value
       import org.scalajs.linker.interface.OutputPatterns
-      if (isRelease) config
+      if (virtualAxes.value.contains(BuildStyle.SingleFile)) config
       else
         config
           .withModuleSplitStyle(
-            ModuleSplitStyle.SmallModulesFor(List("frontend"))
+            ModuleSplitStyle
+              .SmallModulesFor(List(s"${Config.BasePackage}.frontend"))
           )
           .withModuleKind(ModuleKind.ESModule)
           .withOutputPatterns(OutputPatterns.fromJSFile("%s.mjs"))
@@ -155,18 +182,34 @@ lazy val frontend = projectMatrix
 lazy val defaults =
   Seq(VirtualAxis.scalaABIVersion(Versions.Scala), VirtualAxis.jvm)
 
-lazy val frontendOutput = taskKey[(Report, File)]("")
+lazy val frontendModules = taskKey[(Report, File)]("")
+ThisBuild / frontendModules := (Def.taskIf {
+  def proj = frontend.finder(BuildStyle.Modules)(
+    Versions.Scala
+  )
 
-lazy val frontendJS = frontend.js(Versions.Scala)
-
-ThisBuild / frontendOutput := {
   if (isRelease)
-    (frontendJS / Compile / fullLinkJS).value.data ->
-      (frontendJS / Compile / fullLinkJS / scalaJSLinkerOutputDirectory).value
+    (proj / Compile / fullLinkJS).value.data ->
+      (proj / Compile / fullLinkJS / scalaJSLinkerOutputDirectory).value
   else
-    (frontendJS / Compile / fastLinkJS).value.data ->
-      (frontendJS / Compile / fastLinkJS / scalaJSLinkerOutputDirectory).value
-}
+    (proj / Compile / fastLinkJS).value.data ->
+      (proj / Compile / fastLinkJS / scalaJSLinkerOutputDirectory).value
+}).value
+
+lazy val frontendBundle = taskKey[File]("")
+ThisBuild / frontendBundle := (Def.taskIf {
+  def proj = frontend.finder(BuildStyle.SingleFile)(
+    Versions.Scala
+  )
+
+  if (isRelease) {
+    val res = (proj / Compile / fullLinkJS).value
+    (proj / Compile / fullLinkJS / scalaJSLinkerOutputDirectory).value
+  } else {
+    val res = (proj / Compile / fastLinkJS).value
+    (proj / Compile / fastLinkJS / scalaJSLinkerOutputDirectory).value
+  }
+}).value
 
 lazy val isRelease = sys.env.get("RELEASE").contains("yesh")
 
@@ -180,11 +223,15 @@ addCommandAlias(
   "integrationTests",
   "backend/testOnly jobby.tests.integration.*"
 )
+addCommandAlias(
+  "frontendTests",
+  "backend/testOnly jobby.tests.frontend.*"
+)
 
 lazy val buildFrontend = taskKey[Unit]("")
 
 buildFrontend := {
-  val (_, folder) = frontendOutput.value
+  val (_, folder) = frontendModules.value
   val buildDir    = (ThisBuild / baseDirectory).value / "frontend-build"
 
   val indexHtml = buildDir / "index.html"
