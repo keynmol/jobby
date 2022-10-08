@@ -14,23 +14,49 @@ object UserToolbar:
       router: Router[Page]
   ): UserToolbar =
     val logout =
-      button(Styles.userToolbar.button, "Logout", navigateTo(Page.Logout))
+      button(
+        Styles.userToolbar.button,
+        cls := "nav-link",
+        "Logout",
+        navigateTo(Page.Logout)
+      )
 
     val register =
-      button(Styles.userToolbar.button, "Register", navigateTo(Page.Register))
+      button(
+        Styles.userToolbar.button,
+        cls := "nav-link",
+        "Register",
+        navigateTo(Page.Register)
+      )
 
     val login =
-      button(Styles.userToolbar.button, "Login", navigateTo(Page.Login))
+      button(
+        Styles.userToolbar.button,
+        cls := "nav-link",
+        "Login",
+        navigateTo(Page.Login)
+      )
 
     val addJob =
-      button(Styles.userToolbar.button, "Add a job", navigateTo(Page.CreateJob))
+      button(
+        Styles.userToolbar.button,
+        cls := "nav-link",
+        "Add a job",
+        navigateTo(Page.CreateJob)
+      )
 
     val profile =
-      button(Styles.userToolbar.button, "Profile", navigateTo(Page.Profile))
+      button(
+        Styles.userToolbar.button,
+        cls := "nav-link",
+        "Profile",
+        navigateTo(Page.Profile)
+      )
 
     val addCompany =
       button(
         Styles.userToolbar.button,
+        cls := "nav-link",
         "Add a company",
         navigateTo(Page.CreateCompany)
       )

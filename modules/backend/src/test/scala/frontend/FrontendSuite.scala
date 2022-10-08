@@ -26,7 +26,7 @@ abstract class FrontendSuite(global: GlobalRead)
             Some(
               LaunchOptions()
                 .setHeadless(sys.env.contains("CI"))
-                .setSlowMo(sys.env.get("CI").map(_ => 0).getOrElse(1000))
+                .setSlowMo(sys.env.get("CI").map(_ => 0).getOrElse(200))
             )
           )
         )

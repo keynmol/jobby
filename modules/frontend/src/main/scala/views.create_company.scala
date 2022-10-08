@@ -37,6 +37,7 @@ object CreateCompanyForm:
           inputGroup(
             "name",
             input(
+              idAttr := "input-company-name",
               controlled(
                 value <-- stateVar.signal.map(_.name.value),
                 onInput.mapToValue --> nameWriter
@@ -46,7 +47,8 @@ object CreateCompanyForm:
           inputGroup(
             "description",
             textArea(
-              rows := 15,
+              idAttr := "input-company-description",
+              rows   := 15,
               controlled(
                 value <-- stateVar.signal.map(_.description.value),
                 onInput.mapToValue --> descriptionWriter
@@ -56,13 +58,19 @@ object CreateCompanyForm:
           inputGroup(
             "url",
             input(
+              idAttr := "input-company-url",
               controlled(
                 value <-- stateVar.signal.map(_.url.value),
                 onInput.mapToValue --> urlWriter
               )
             )
           ),
-          button(tpe := "submit", "Create", Styles.form.submit)
+          button(
+            tpe    := "submit",
+            idAttr := "input-company-submit",
+            "Create",
+            Styles.form.submit
+          )
         )
       )
 
