@@ -9,8 +9,9 @@ import natchez.Trace.Implicits.noop
 import cats.syntax.all.*
 import cats.effect.*
 import weaver.*
-import org.tpolecat.poolparty.PooledResourceBuilder.apply
 import org.tpolecat.poolparty.PooledResourceBuilder
+import com.indoorvivants.weaver.playwright.BrowserConfig.Chromium
+import com.microsoft.playwright.BrowserType.LaunchOptions
 
 abstract class FrontendSuite(global: GlobalRead)
     extends weaver.IOSuite
@@ -19,28 +20,20 @@ abstract class FrontendSuite(global: GlobalRead)
 
   override def sharedResource =
     integration.Fixture.resource.flatMap { pb =>
-      PlaywrightRuntime.single().map { pw =>
-        Resources(pb, pw)
-      }
+      PlaywrightRuntime
+        .single(browser =
+          Chromium(
+            Some(
+              LaunchOptions()
+                .setHeadless(sys.env.contains("CI"))
+                .setSlowMo(sys.env.get("CI").map(_ => 0).getOrElse(1000))
+            )
+          )
+        )
+        .map { pw =>
+          Resources(pb, pw)
+        }
     }
-    // integration.Resources
-    //   .sharedResourceOrFallback(global)
-    //   .flatMap { probe =>
-    //     // PooledResourceBuilder
-    //     //   .of(PlaywrightRuntime.single(), 4)
-    //     //   .withReporter(ev => IO.println(ev))
-    //     //   .build
-    //     //   .map(new PooledPlaywrightRuntime(_))
-    //     //   .map { pw => Resources(probe, pw) }
-    //     //   .onFinalize(IO.println("Closing playwright..."))
-
-    //     PlaywrightRuntime
-    //       .single()
-    //       .map { pw =>
-    //         Resources(probe, pw)
-    //       }
-    //       .onFinalize(IO.println("Closing playwright..."))
-    //   }
 
   val (poolSize, timeout) =
     if sys.env.contains("CI") then 1 -> 30.seconds
@@ -54,9 +47,3 @@ abstract class FrontendSuite(global: GlobalRead)
   def configure(pc: PageContext) =
     pc.page(_.setDefaultTimeout(timeout.toMillis))
 end FrontendSuite
-
-class PooledPlaywrightRuntime(
-    pool: Resource[IO, PlaywrightRuntime]
-) extends PlaywrightRuntime:
-  override def pageContext: Resource[IO, PageContext] =
-    pool.flatMap(_.pageContext)

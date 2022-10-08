@@ -37,7 +37,8 @@ object CredentialsForm:
           "login",
           input(
             Styles.textInput,
-            tpe := "text",
+            idAttr := "credentials-login",
+            tpe    := "text",
             onInput.mapToValue.map(UserLogin.apply) --> loginWriter
           )
         ),
@@ -45,12 +46,14 @@ object CredentialsForm:
           "password",
           input(
             Styles.textInput,
-            tpe := "password",
+            idAttr := "credentials-password",
+            tpe    := "password",
             onInput.mapToValue.map(UserPassword.apply) --> passwordWriter
           )
         ),
         button(
           Styles.form.submit,
+          idAttr := "credentials-submit",
           submitButton,
           tpe := "submit"
         )

@@ -38,7 +38,8 @@ object Fixture:
       )
     ).flatTap(cont => IO(cont.start()))
 
-    Resource.make(start)(cont => IO(cont.stop())).onFinalizeCase(ex => IO.println(s"Shutting down testcontainer $ex"))
+    Resource.make(start)(cont => IO(cont.stop()))
+      //.onFinalizeCase(ex => IO.println(s"Shutting down testcontainer $ex"))
   end postgresContainer
 
   private def migrate(url: String, user: String, password: String) =
@@ -64,7 +65,7 @@ object Fixture:
 
         SkunkDatabase
           .load(pgConfig, skunk)
-          .onFinalizeCase(ex => IO.println(s"shutting down skunk... $ex"))
+          // .onFinalizeCase(ex => IO.println(s"shutting down skunk... $ex"))
           .map(pgConfig -> _)
 
       }
@@ -83,17 +84,17 @@ object Fixture:
     silenceOfTheLogs.foreach { log =>
       Logger(log).withMinimumLevel(Level.Error).replace()
     }
-    val mw =
-      RequestLogger
-        .httpApp[IO](true, true, logAction = Some(f => IO.println(f)))
+    // val mw =
+    //   RequestLogger
+    //     .httpApp[IO](true, true, logAction = Some(f => IO.println(f)))
 
-    val rw =
-      ResponseLogger
-        .httpApp[IO, Request[IO]](
-          true,
-          true,
-          logAction = Some(f => IO.println(f.take(500)))
-        )
+    // val rw =
+    //   ResponseLogger
+    //     .httpApp[IO, Request[IO]](
+    //       true,
+    //       true,
+    //       logAction = Some(f => IO.println(f.take(500)))
+    //     )
 
     for
       shutdownLatch <- Resource.eval(IO.ref(false))
@@ -112,7 +113,6 @@ object Fixture:
       ).routes
       latchedRoutes = HttpApp[IO] { case req =>
         shutdownLatch.get.flatMap { deadSkunk =>
-          println(deadSkunk)
           if deadSkunk then
             IO.pure(
               org.http4s
@@ -125,13 +125,14 @@ object Fixture:
         }
       }
       uri <- BlazeServerBuilder[IO]
-        .withHttpApp(rw(mw(latchedRoutes)))
+        // .withHttpApp(rw(mw(latchedRoutes)))
+        .withHttpApp(latchedRoutes)
         .bindHttp(0, "localhost")
         .resource
         .map(_.baseUri)
-        .onFinalizeCase(ex => IO.println(s"shutting down server... $ex"))
+        // .onFinalizeCase(ex => IO.println(s"shutting down server... $ex"))
       client <- BlazeClientBuilder[IO].resource.onFinalize(
-        IO.println("why") *> shutdownLatch.set(true)
+        shutdownLatch.set(true)
       )
       probe <-
         Probe.build(
