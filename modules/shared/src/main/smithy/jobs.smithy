@@ -1,3 +1,5 @@
+$version: "2.0"
+
 namespace jobby.spec
 
 use smithy4s.api#simpleRestJson

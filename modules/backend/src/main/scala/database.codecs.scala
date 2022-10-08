@@ -30,7 +30,9 @@ object codecs:
   val jobUrl             = varchar(512).as(JobUrl)
   val currency =
     `enum`[Currency](_.value, Currency.fromString, Type("currency_enum"))
+
   val salaryRange = (minSalary ~ maxSalary ~ currency).gimap[SalaryRange]
+
   val added = timestamptz
     .imap(Timestamp.fromOffsetDateTime)(_.toOffsetDateTime)
     .as(JobAdded)
