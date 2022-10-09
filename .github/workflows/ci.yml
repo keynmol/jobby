@@ -27,11 +27,22 @@ jobs:
           java-version: '17'
           cache: sbt
 
+      - name: Compile
+        run: sbt --client 'compile; Test/compile'
+
       - name: Run Unit and Stub tests
         run: sbt --client fastTests
 
       - name: Run Integration tests
         run: sbt --client integrationTests
+
+      - name: Run Frontend tests
+        run: sbt --client frontendTests
+
+      - uses: actions/upload-artifact@v3
+        if: failure()
+        with:
+          path: ./playwright-screenshots/
 
       - name: Deploy
         if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main')        

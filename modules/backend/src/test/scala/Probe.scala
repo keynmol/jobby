@@ -15,6 +15,7 @@ import scribe.Level
 case class Probe(
     api: Api,
     auth: HttpAuth,
+    serverUri: Uri,
     gen: Generator,
     config: AppConfig,
     getLogs: IO[Vector[LogRecord]]
@@ -36,6 +37,6 @@ object Probe:
           config.jwt,
           logger.scribeLogger
         )
-      yield Probe(api, auth, gen, config, logger.logs)
+      yield Probe(api, auth, uri, gen, config, logger.logs)
     }
 end Probe

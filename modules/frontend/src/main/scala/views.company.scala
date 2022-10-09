@@ -41,13 +41,23 @@ object CompanyListing:
         Styles.company.name,
         a(
           navigateTo(Page.CompanyPage(company.id)),
+          idAttr := "company-profile-name",
           name.value,
           Styles.company.internalUrl
         ),
         span(" ", deleteLink)
       ),
-      a(url.value, href := url.value, Styles.company.url),
-      pre(description.value, Styles.company.description)
+      a(
+        url.value,
+        idAttr := "company-profile-url",
+        href   := url.value,
+        Styles.company.url
+      ),
+      pre(
+        description.value,
+        idAttr := "company-profile-description",
+        Styles.company.description
+      )
     )
 
     CompanyListing(node)
