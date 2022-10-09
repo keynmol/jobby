@@ -27,7 +27,6 @@ object SkunkDatabase:
         debug = skunkConfig.debug,
         ssl = if postgres.ssl then skunk.SSL.Trusted else skunk.SSL.None
       )
-      // .onFinalizeCase(ex => IO.println(s"shutting down skunk pool... $ex"))
       .map(SkunkDatabase(_))
   end load
 end SkunkDatabase
