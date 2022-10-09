@@ -39,7 +39,6 @@ object Fixture:
     ).flatTap(cont => IO(cont.start()))
 
     Resource.make(start)(cont => IO(cont.stop()))
-      //.onFinalizeCase(ex => IO.println(s"Shutting down testcontainer $ex"))
   end postgresContainer
 
   private def migrate(url: String, user: String, password: String) =
@@ -83,18 +82,6 @@ object Fixture:
     silenceOfTheLogs.foreach { log =>
       Logger(log).withMinimumLevel(Level.Error).replace()
     }
-    val mw =
-      RequestLogger
-        .httpApp[IO](true, true, logAction = Some(f => IO.println(f)))
-
-    val rw =
-      ResponseLogger
-        .httpApp[IO, Request[IO]](
-          true,
-          true,
-          logAction = Some(f => IO.println(f.take(500)))
-        )
-
     for
       shutdownLatch <- Resource.eval(IO.ref(false))
       res           <- skunkConnection
@@ -124,12 +111,11 @@ object Fixture:
         }
       }
       uri <- BlazeServerBuilder[IO]
-        .withHttpApp(rw(mw(latchedRoutes)))
-        // .withHttpApp(latchedRoutes)
+        .withHttpApp(latchedRoutes)
         .bindHttp(0, "localhost")
         .resource
         .map(_.baseUri)
-        // .onFinalizeCase(ex => IO.println(s"shutting down server... $ex"))
+
       client <- BlazeClientBuilder[IO].resource.onFinalize(
         shutdownLatch.set(true)
       )
