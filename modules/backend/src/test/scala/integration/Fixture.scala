@@ -65,7 +65,6 @@ object Fixture:
 
         SkunkDatabase
           .load(pgConfig, skunk)
-          // .onFinalizeCase(ex => IO.println(s"shutting down skunk... $ex"))
           .map(pgConfig -> _)
 
       }

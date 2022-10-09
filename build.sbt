@@ -112,7 +112,8 @@ lazy val backend = projectMatrix
         "org.flywaydb"         % "flyway-core"         % Versions.Flyway
       ).map(_ % Test),
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
-    Test / fork := true,
+    Test / fork          := true,
+    Test / baseDirectory := (ThisBuild / baseDirectory).value,
     Test / resourceGenerators += {
       Def.task[Seq[File]] {
         copyAll(

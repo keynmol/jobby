@@ -12,6 +12,7 @@ import weaver.*
 import org.tpolecat.poolparty.PooledResourceBuilder
 import com.indoorvivants.weaver.playwright.BrowserConfig.Chromium
 import com.microsoft.playwright.BrowserType.LaunchOptions
+import java.nio.file.Paths
 
 abstract class FrontendSuite(global: GlobalRead)
     extends weaver.IOSuite
@@ -46,4 +47,42 @@ abstract class FrontendSuite(global: GlobalRead)
 
   def configure(pc: PageContext) =
     pc.page(_.setDefaultTimeout(timeout.toMillis))
+
+  def frontendTest(
+      name: TestName
+  )(f: (Probe, PageContext, PageFragments) => IO[Expectations]) =
+    test(name) { (res, logs) =>
+      getPageContext(res).evalTap(configure).use { pc =>
+        def screenshot(pc: PageContext, name: String) =
+          val path = Paths.get("playwright-screenshots", name + ".png")
+          pc.screenshot(path) *> logs.info(
+            s"Screenshot of last known page state is saved at ${path.toAbsolutePath()}"
+          )
+
+        f(res.probe, pc, PageFragments(pc, res.probe, retryPolicy))
+          .guaranteeCase {
+            case Outcome.Errored(e) =>
+              screenshot(
+                pc,
+                "error-" + name.name.collect {
+                  case c if c.isWhitespace => '_'; case o => o
+                }
+              )
+            case Outcome.Succeeded(ioa) =>
+              ioa.flatMap { exp =>
+                if exp.run.isValid then IO.unit
+                else
+                  screenshot(
+                    pc,
+                    "failure-" + name.name.collect {
+                      case c if c.isWhitespace => '_'; case o => o
+                    }
+                  )
+              }
+            case _ => IO.unit
+          }
+      }
+    }
+  end frontendTest
+
 end FrontendSuite
