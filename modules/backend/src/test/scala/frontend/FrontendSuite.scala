@@ -59,25 +59,18 @@ abstract class FrontendSuite(global: GlobalRead)
             s"Screenshot of last known page state is saved at ${path.toAbsolutePath()}"
           )
 
+        def testName = name.name.collect {
+          case c if c.isWhitespace => '_'; case o => o
+        }
+
         f(res.probe, pc, PageFragments(pc, res.probe, retryPolicy))
           .guaranteeCase {
             case Outcome.Errored(e) =>
-              screenshot(
-                pc,
-                "error-" + name.name.collect {
-                  case c if c.isWhitespace => '_'; case o => o
-                }
-              )
+              screenshot(pc, s"error-$testName")
             case Outcome.Succeeded(ioa) =>
               ioa.flatMap { exp =>
                 if exp.run.isValid then IO.unit
-                else
-                  screenshot(
-                    pc,
-                    "failure-" + name.name.collect {
-                      case c if c.isWhitespace => '_'; case o => o
-                    }
-                  )
+                else screenshot(pc, s"failure-$testName")
               }
             case _ => IO.unit
           }

@@ -91,7 +91,7 @@ class UsersSpec(global: GlobalRead) extends FrontendSuite(global):
       url <- locator("#company-profile-url").map(_.innerText())
     yield expect
       .all(
-        name != attributes.name.value,
+        name == attributes.name.value,
         url == attributes.url.value,
         description == attributes.description.value
       )
