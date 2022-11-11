@@ -21,6 +21,7 @@ case class Probe(
     getLogs: IO[Vector[LogRecord]]
 ):
   def fragments = Fragments(this)
+end Probe
 
 object Probe:
   def build(

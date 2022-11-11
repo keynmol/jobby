@@ -1,5 +1,5 @@
-package jobby 
-package tests 
+package jobby
+package tests
 package frontend
 
 import scala.concurrent.duration.*
