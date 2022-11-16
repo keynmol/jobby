@@ -133,7 +133,7 @@ lazy val shared = projectMatrix
   .settings(
     libraryDependencies ++= Seq(
       "com.disneystreaming.smithy4s" %%% "smithy4s-http4s" % smithy4sVersion.value,
-      "io.lemonlabs" %%% "scala-uri" % "4.0.2"
+      "io.lemonlabs" %%% "scala-uri" % "4.0.3"
     ),
     Compile / doc / sources := Seq.empty
   )
