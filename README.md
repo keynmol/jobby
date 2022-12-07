@@ -9,8 +9,8 @@ This is a full-stack Scala application (job posting board), made with the follow
 4. [PostgreSQL](https://www.postgresql.org) and [Skunk](https://tpolecat.github.io/skunk/) for database access 
 5. [Weaver-Test](https://disneystreaming.github.io/weaver-test/) for unit and integration testing
 
-The entire app is auto-deployed to [Heroku](https://heroku.com), you can see the **live version [here](https://jobby-smithy4s.herokuapp.com)**
-(_note that it is on a free plan, so the app might be asleep, and will take longer to load at first)_
+The entire app is auto-deployed to [Heroku](https://heroku.com), ~you can see the **live version [here](https://jobby-smithy4s.herokuapp.com)**
+(_note that it is on a free plan, so the app might be asleep, and will take longer to load at first_)~ and so the time has come for Heroku to kill my free apps. Soon I will migrate it to Fly.io)
 
 It's a companion repo for my [4-part blog post series](https://blog.indoorvivants.com/2022-06-10-smithy4s-fullstack-part-1)
 
