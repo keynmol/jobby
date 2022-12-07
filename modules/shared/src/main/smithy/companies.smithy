@@ -10,8 +10,8 @@ metadata suppressions = [
 
 namespace jobby.spec
 
-use smithy4s.api#simpleRestJson
-use smithy4s.api#uuidFormat
+use alloy#simpleRestJson
+use alloy#uuidFormat
 
 // SERVICES
 

@@ -9,7 +9,6 @@ import natchez.Trace.Implicits.noop
 import cats.syntax.all.*
 import cats.effect.*
 import weaver.*
-import org.tpolecat.poolparty.PooledResourceBuilder
 import com.indoorvivants.weaver.playwright.BrowserConfig.Chromium
 import com.microsoft.playwright.BrowserType.LaunchOptions
 import java.nio.file.Paths

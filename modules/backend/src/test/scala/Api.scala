@@ -20,16 +20,22 @@ object Api:
   def build(client: Client[IO], uri: Uri): IO[Api] =
     val companies = IO.fromEither(
       SimpleRestJsonBuilder(CompaniesService)
-        .client(client, uri)
+        .client(client)
+        .uri(uri)
+        .use
     )
     val jobs = IO.fromEither(
       SimpleRestJsonBuilder(JobService)
-        .client(client, uri)
+        .client(client)
+        .uri(uri)
+        .use
     )
 
     val users = IO.fromEither(
       SimpleRestJsonBuilder(UserService)
-        .client(client, uri)
+        .client(client)
+        .uri(uri)
+        .use
     )
 
     (companies, jobs, users).mapN(Api.apply)

@@ -37,17 +37,23 @@ object Api:
 
     val companies =
       SimpleRestJsonBuilder(CompaniesService)
-        .client(client, uri)
+        .client(client)
+        .uri(uri)
+        .use
         .fold(throw _, identity)
 
     val jobs =
       SimpleRestJsonBuilder(JobService)
-        .client(client, uri)
+        .client(client)
+        .uri(uri)
+        .use
         .fold(throw _, identity)
 
     val users =
       SimpleRestJsonBuilder(UserService)
-        .client(client, uri)
+        .client(client)
+        .uri(uri)
+        .use
         .fold(throw _, identity)
 
     Api(companies, jobs, users)

@@ -2,8 +2,8 @@ $version: "2.0"
 
 namespace jobby.spec
 
-use smithy4s.api#simpleRestJson
-use smithy4s.api#uuidFormat
+use alloy#simpleRestJson
+use alloy#uuidFormat
 
 @simpleRestJson
 service JobService {
