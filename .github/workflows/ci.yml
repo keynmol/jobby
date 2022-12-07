@@ -51,7 +51,7 @@ jobs:
         # if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main')        
 
       - name: Deploy to fly.io
-        if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main') || (github.ref == 'fly-io-deploy')
-        run: "fly deploy -a jobby-web -i jobby-smithy4s:0.1.0-SNAPSHOT --local-only"
+        if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main') || (github.ref == 'refs/heads/fly-io-deploy')
+        run: "fly deploy -a jobby-web -i jobby-smithy4s:0.1.0-SNAPSHOT --local-only -c fly.toml"
         env:
           FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}
