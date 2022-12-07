@@ -39,21 +39,19 @@ jobs:
       - name: Run Frontend tests
         run: sbt --client frontendTests
 
+      - name: Publish local Docker image
+        run: sbt --client publishDocker
+
       - uses: actions/upload-artifact@v3
         if: failure()
         with:
           path: ./playwright-screenshots/
 
-      - name: Deploy
-        if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main')        
+      - uses: superfly/flyctl-actions/setup-flyctl@master
+        # if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main')        
+
+      - name: Deploy to fly.io
+        if: startsWith(github.ref, 'refs/tags/v') || (github.ref == 'refs/heads/main') || (github.ref == 'fly-io-deploy')
+        run: "fly deploy -a jobby-web -i jobby-smithy4s:0.1.0-SNAPSHOT --local-only"
         env:
-          HEROKU_API_KEY: ${{ secrets.HEROKU_API_KEY }}
-          HEROKU_DEV_APP_NAME: ${{ secrets.HEROKU_DEV_APP_NAME }}
-        run: | 
-          sbt --client app/Docker/publishLocal
-          # SECURITY YO
-          curl https://cli-assets.heroku.com/install.sh | sh
-          heroku container:login
-          docker tag jobby-smithy4s:0.1.0-SNAPSHOT registry.heroku.com/$HEROKU_DEV_APP_NAME/web
-          docker push registry.heroku.com/$HEROKU_DEV_APP_NAME/web 
-          heroku container:release web -a $HEROKU_DEV_APP_NAME
+          FLY_API_TOKEN: ${{ secrets.FLY_API_TOKEN }}

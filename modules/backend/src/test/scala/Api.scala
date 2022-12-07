@@ -13,7 +13,8 @@ import smithy4s.http4s.SimpleRestJsonBuilder
 case class Api(
     companies: CompaniesService[IO],
     jobs: JobService[IO],
-    users: UserService[IO]
+    users: UserService[IO],
+    health: HealthService[IO]
 )
 
 object Api:
@@ -38,6 +39,14 @@ object Api:
         .use
     )
 
-    (companies, jobs, users).mapN(Api.apply)
+    val health = IO.fromEither(
+      SimpleRestJsonBuilder(HealthService)
+        .client(client)
+        .uri(uri)
+        .use
+    )
+
+
+    (companies, jobs, users, health).mapN(Api.apply)
   end build
 end Api

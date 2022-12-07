@@ -36,9 +36,11 @@ object AppConfig:
 
     val platformSh = PlatformShLoader(envWithFallback)
     val heroku     = HerokuLoader(envWithFallback)
+    val flyio      = FlyIOLoader(envWithFallback)
 
     val postgres = platformSh
       .loadPgCredentials("database")
+      .orElse(flyio.loadPgCredentials)
       .orElse(heroku.loadPgCredentials)
       .getOrElse(PgCredentials.from(envWithFallback))
 

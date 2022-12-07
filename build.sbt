@@ -214,6 +214,7 @@ ThisBuild / frontendBundle := (Def.taskIf {
 
 lazy val isRelease = sys.env.get("RELEASE").contains("yesh")
 
+addCommandAlias("publishDocker", "app/Docker/publishLocal")
 addCommandAlias("stubTests", "backend/testOnly jobby.tests.stub.*")
 addCommandAlias("unitTests", "backend/testOnly jobby.tests.unit.*")
 addCommandAlias(
