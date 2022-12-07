@@ -1,19 +1,18 @@
 package jobby
 
-import java.nio.file.Paths
-
 import cats.data.Kleisli
 import cats.effect.*
 import cats.implicits.*
-
 import jobby.spec.*
-
 import org.http4s.*
 import org.http4s.dsl.io.*
 import scribe.Scribe
 import smithy4s.http4s.SimpleRestJsonBuilder
 
+import java.nio.file.Paths
+
 import users.*
+import health.*
 
 def Routes(
     db: Database,
@@ -40,7 +39,9 @@ def Routes(
     users <- SimpleRestJsonBuilder
       .routes(UserServiceImpl(db, auth, logger, config.http.deployment))
       .resource
-  yield handleErrors(jobs <+> companies <+> users <+> Static.routes)
+
+    health <- SimpleRestJsonBuilder.routes(HealthServiceImpl).resource
+  yield handleErrors(health <+> jobs <+> companies <+> users <+> Static.routes)
   end for
 end Routes
 

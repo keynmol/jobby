@@ -15,3 +15,7 @@ class CompaniesTests(global: GlobalRead)
 class JobsTests(global: GlobalRead)
     extends StubSuite(global)
     with jobby.tests.JobsSuite
+
+class HealthTests(global: GlobalRead)
+    extends StubSuite(global)
+    with jobby.tests.HealthSuite
