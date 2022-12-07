@@ -23,7 +23,7 @@ class FlyIOLoader(env: Map[String, String]):
           user = userName,
           password = Some(password),
           database = dbName,
-          ssl = true
+          ssl = false
         )
       }.toOption
 
