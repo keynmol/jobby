@@ -34,4 +34,4 @@ app = "jobby-web"
   tls_skip_verify = false
 
 [env]
-  JAVA_OPTS = "-Xmx200M -Xms200M"
+  JAVA_OPTS = "-Xmx150M -Xms150M -XX:UseParallelGC -XX:MinHeapFreeRatio=20 -XX:MaxHeapFreeRatio=40 -XX:GCTimeRatio=4 -XX:AdaptiveSizePolicyWeight=90"
