@@ -34,4 +34,4 @@ app = "jobby-web"
   tls_skip_verify = false
 
 [env]
-  JAVA_OPTS = "-Xmx200M -Xmxs200M"
+  JAVA_OPTS = "-Xmx200M -Xms200M"
