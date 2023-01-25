@@ -18,10 +18,10 @@ import cats.effect.kernel.Resource
 
 sealed abstract class SqlQuery[I, O](val input: I, query: skunk.Query[I, O]):
   def use[A](session: Session[IO])(f: PreparedQuery[IO, I, O] => IO[A]) =
-    session.prepare(query).use(f)
+    session.prepareR(query).use(f)
 
   def prepare(session: Session[IO]): Resource[IO, PreparedQuery[IO, I, O]] =
-    session.prepare(query)
+    session.prepareR(query)
 end SqlQuery
 
 // user ops
