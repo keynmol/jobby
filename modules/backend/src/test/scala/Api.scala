@@ -46,7 +46,6 @@ object Api:
         .use
     )
 
-
     (companies, jobs, users, health).mapN(Api.apply)
   end build
 end Api
