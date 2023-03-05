@@ -22,6 +22,7 @@ class Api private (
     val jobs: JobService[IO],
     val users: UserService[IO]
 ):
+  import org.scalajs.macrotaskexecutor.MacrotaskExecutor.Implicits.*
   def future[A](a: Api => IO[A]): Future[A] =
     a(this).unsafeToFuture()
 

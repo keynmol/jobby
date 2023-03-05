@@ -18,11 +18,12 @@ val Versions = new {
   val TestContainers   = "0.40.12"
   val Weaver           = "0.8.1"
   val WeaverPlaywright = "0.0.5"
-  val Laminar          = "0.14.5"
-  val waypoint         = "0.5.0"
+  val Laminar          = "15.0.0-M7"
+  val waypoint         = "6.0.0-M5"
   val scalacss         = "1.0.0"
   val monocle          = "3.2.0"
   val circe            = "0.14.5"
+  val macroTaskExecutor = "1.1.1"
 }
 
 val Config = new {
@@ -176,7 +177,8 @@ lazy val frontend = projectMatrix
       "com.lihaoyi"                  %%% "upickle"      % Versions.upickle,
       "io.circe"                     %%% "circe-core"   % Versions.circe,
       "io.circe"                     %%% "circe-parser" % Versions.circe,
-      "org.http4s"                   %%% "http4s-dom"   % Versions.http4sDom
+      "org.http4s"                   %%% "http4s-dom"   % Versions.http4sDom,
+      "org.scala-js" %%% "scala-js-macrotask-executor" % Versions.macroTaskExecutor
     )
   )
 

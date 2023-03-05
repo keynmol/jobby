@@ -35,7 +35,7 @@ object AppState:
   def init: AppState =
     AppState(
       _authToken = Var(None),
-      events = EventBus[AuthEvent]
+      events = EventBus[AuthEvent]()
     )
 
 end AppState
