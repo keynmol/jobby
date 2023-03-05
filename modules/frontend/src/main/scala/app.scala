@@ -22,7 +22,7 @@ object Main:
   def renderPage(using
       router: Router[Page]
   )(using state: AppState, api: Api): Signal[HtmlElement] =
-    SplitRender[Page, HtmlElement](router.$currentPage)
+    SplitRender[Page, HtmlElement](router.currentPageSignal)
       .collectStatic(Page.Login)(pages.login)
       .collectStatic(Page.Logout)(pages.logout)
       .collectStatic(Page.LatestJobs)(pages.latest_jobs)
@@ -32,7 +32,7 @@ object Main:
       .collectStatic(Page.Profile)(pages.profile)
       .collectSignal[Page.CompanyPage](pages.company)
       .collectSignal[Page.JobPage](pages.job)
-      .$view
+      .signal
 
   def main(args: Array[String]): Unit =
     given state: AppState = AppState.init
@@ -45,7 +45,7 @@ object Main:
 
     val app = div(
       Styles.container,
-      header(
+      headerTag(
         Styles.headerContainer,
         div(
           a(Styles.logo, "Jobby", navigateTo(Page.LatestJobs)),
@@ -72,14 +72,16 @@ object Main:
       )
     )
 
-    documentEvents.onDomContentLoaded.foreach { _ =>
-      import scalacss.ProdDefaults.*
+    renderOnDomContentLoaded(
+      dom.document.getElementById("appContainer"), {
+        import scalacss.ProdDefaults.*
 
-      val sty = styleTag(Styles.render[String], `type` := "text/css")
-      dom.document.querySelector("head").appendChild(sty.ref)
+        val sty = styleTag(Styles.render[String], `type` := "text/css")
+        dom.document.querySelector("head").appendChild(sty.ref)
 
-      render(dom.document.getElementById("appContainer"), app)
-    }(unsafeWindowOwner)
+        app
+      }
+    )
   end main
 end Main
 
