@@ -8,6 +8,6 @@ addSbtPlugin("com.eed3si9n"     % "sbt-projectmatrix"   % "0.9.2")
 addSbtPlugin("org.scala-js"     % "sbt-scalajs"         % "1.13.1")
 addSbtPlugin("com.timushev.sbt" % "sbt-updates"         % "0.6.4")
 addSbtPlugin("org.scalameta"    % "sbt-scalafmt"        % "2.5.2")
-addSbtPlugin("com.armanbilge"   % "sbt-bundlemon"       % "0.1.3")
+addSbtPlugin("com.armanbilge"   % "sbt-bundlemon"       % "0.1.4")
 
 libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
