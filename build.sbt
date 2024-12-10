@@ -21,7 +21,7 @@ val Versions = new {
   val Laminar           = "15.0.1"
   val waypoint          = "6.0.0"
   val scalacss          = "1.0.0"
-  val monocle           = "3.2.0"
+  val monocle           = "3.3.0"
   val circe             = "0.14.5"
   val macroTaskExecutor = "1.1.1"
 }
