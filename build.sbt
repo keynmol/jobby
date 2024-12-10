@@ -22,7 +22,7 @@ val Versions = new {
   val waypoint          = "6.0.0"
   val scalacss          = "1.0.0"
   val monocle           = "3.2.0"
-  val circe             = "0.14.5"
+  val circe             = "0.14.10"
   val macroTaskExecutor = "1.1.1"
 }
 
