@@ -1,5 +1,4 @@
-import org.scalajs.linker.interface.Report
-import org.scalajs.linker.interface.ModuleSplitStyle
+import org.scalajs.linker.interface.{ModuleSplitStyle, Report}
 import smithy4s.codegen.Smithy4sCodegenPlugin
 
 Global / onChangedBuildSource := ReloadOnSourceChanges
@@ -7,13 +6,13 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 val Versions = new {
   val http4sBlaze       = "0.23.14"
   val http4s            = "0.23.18"
-  val Scala             = "3.3.4"
-  val skunk             = "0.5.1"
-  val upickle           = "2.0.0"
-  val scribe            = "3.11.1"
+  val Scala             = "3.6.2"
+  val skunk             = "1.0.0-M8"
+  val upickle           = "3.1.4"
+  val scribe            = "3.15.2"
   val http4sDom         = "0.2.7"
-  val jwt               = "9.2.0"
-  val Flyway            = "9.22.3"
+  val jwt               = "10.0.1"
+  val FlywayPG          = "11.0.1"
   val Postgres          = "42.7.4"
   val TestContainers    = "0.41.4"
   val Weaver            = "0.8.4"
@@ -56,7 +55,7 @@ lazy val app = projectMatrix
       "org.http4s"    %% "http4s-blaze-server" % Versions.http4sBlaze,
       "org.http4s"    %% "http4s-ember-server" % Versions.http4s,
       "org.postgresql" % "postgresql"          % Versions.Postgres,
-      "org.flywaydb"   % "flyway-core"         % Versions.Flyway
+      "org.flywaydb" % "flyway-database-postgresql" % Versions.FlywayPG
     ),
     Compile / resourceGenerators += {
       Def.task[Seq[File]] {
@@ -90,7 +89,7 @@ lazy val backend = projectMatrix
     scalaVersion            := Versions.Scala,
     Compile / doc / sources := Seq.empty,
     libraryDependencies ++= Seq(
-      ("com.disneystreaming.smithy4s" %% "smithy4s-http4s" % smithy4sVersion.value),
+      "com.disneystreaming.smithy4s" %% "smithy4s-http4s" % smithy4sVersion.value,
       "com.disneystreaming.smithy4s" %% "smithy4s-http4s-swagger" % smithy4sVersion.value,
       "com.github.jwt-scala" %% "jwt-upickle"  % Versions.jwt,
       "com.lihaoyi"          %% "upickle"      % Versions.upickle,
@@ -110,7 +109,7 @@ lazy val backend = projectMatrix
         "org.http4s"          %% "http4s-ember-server" % Versions.http4s,
         "org.http4s"          %% "http4s-ember-client" % Versions.http4s,
         "org.postgresql"       % "postgresql"          % Versions.Postgres,
-        "org.flywaydb"         % "flyway-core"         % Versions.Flyway
+        "org.flywaydb" % "flyway-database-postgresql" % Versions.FlywayPG
       ).map(_ % Test),
     testFrameworks += new TestFramework("weaver.framework.CatsEffect"),
     Test / fork          := true,
@@ -186,7 +185,7 @@ lazy val defaults =
   Seq(VirtualAxis.scalaABIVersion(Versions.Scala), VirtualAxis.jvm)
 
 lazy val frontendModules = taskKey[(Report, File)]("")
-ThisBuild / frontendModules := (Def.taskIf {
+ThisBuild / frontendModules := Def.taskIf {
   def proj = frontend.finder(BuildStyle.Modules)(
     Versions.Scala
   )
@@ -197,10 +196,10 @@ ThisBuild / frontendModules := (Def.taskIf {
   else
     (proj / Compile / fastLinkJS).value.data ->
       (proj / Compile / fastLinkJS / scalaJSLinkerOutputDirectory).value
-}).value
+}.value
 
 lazy val frontendBundle = taskKey[File]("")
-ThisBuild / frontendBundle := (Def.taskIf {
+ThisBuild / frontendBundle := Def.taskIf {
   def proj = frontend.finder(BuildStyle.SingleFile)(
     Versions.Scala
   )
@@ -212,7 +211,7 @@ ThisBuild / frontendBundle := (Def.taskIf {
     val res = (proj / Compile / fastLinkJS).value
     (proj / Compile / fastLinkJS / scalaJSLinkerOutputDirectory).value
   }
-}).value
+}.value
 
 lazy val isRelease = sys.env.get("RELEASE").contains("yesh")
 

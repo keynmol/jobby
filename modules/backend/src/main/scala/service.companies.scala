@@ -1,13 +1,10 @@
 package jobby
 
-import jobby.spec.*
 import cats.effect.*
-import java.util.UUID
-import jobby.database.{operations as op}
-import jobby.spec.CompaniesServiceGen.CreateCompany
 import cats.syntax.all.*
-
-import validation.*
+import jobby.database.{operations as op}
+import jobby.spec.*
+import jobby.validation.*
 
 class CompaniesServiceImpl(db: Database, httpAuth: HttpAuth)
     extends CompaniesService[IO]:

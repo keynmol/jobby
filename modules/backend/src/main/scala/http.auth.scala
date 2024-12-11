@@ -1,14 +1,11 @@
 package jobby
 
-import jobby.spec.*
-import java.util.UUID
-import scala.util.Try
 import cats.effect.IO
-import scala.util.Failure
-import scala.util.Success
-import pdi.jwt.exceptions.JwtException
-import scala.concurrent.duration.FiniteDuration
+import jobby.spec.*
 import scribe.Scribe
+
+import scala.concurrent.duration.FiniteDuration
+import scala.util.{Failure, Success}
 
 class HttpAuth(config: JwtConfig, logger: Scribe[IO]):
 

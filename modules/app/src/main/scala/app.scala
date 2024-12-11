@@ -47,7 +47,7 @@ object Main extends IOApp:
     }.toMap
 
   def run(args: List[String]) =
-    import natchez.Trace.Implicits.noop
+    import org.typelevel.otel4s.trace.Tracer.Implicits.noop
 
     val logger = scribe.cats.io
 

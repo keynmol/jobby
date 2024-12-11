@@ -4,7 +4,7 @@ package stub
 
 import weaver.*
 
-import natchez.Trace.Implicits.noop
+import org.typelevel.otel4s.trace.Tracer.Implicits.noop
 
 abstract class StubSuite(global: GlobalRead) extends JobbySuite:
   override def sharedResource = Fixture.resource

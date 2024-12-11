@@ -1,14 +1,10 @@
 package jobby
 
-import jobby.spec.*
 import cats.effect.*
 import cats.implicits.*
-import java.util.UUID
-
+import jobby.spec.*
 import database.operations as op
-import smithy4s.Timestamp
-
-import validation.*
+import jobby.validation.*
 
 class JobServiceImpl(db: Database, auth: HttpAuth, timeCop: TimeCop)
     extends JobService[IO]:

@@ -1,7 +1,7 @@
 package jobby
 
-import scala.util.Try
 import java.util.Base64
+import scala.util.Try
 import scala.util.control.NonFatal
 
 class PlatformShLoader(env: Map[String, String]):
@@ -15,7 +15,7 @@ class PlatformShLoader(env: Map[String, String]):
             scribe.error("Failed to parse PLATFORM_RELATIONSHIPS", error)
             Option.empty
           },
-          Option.apply(_)
+          Option.apply
         )
     }
 

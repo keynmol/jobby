@@ -3,13 +3,12 @@ package users
 
 import jobby.spec.*
 import cats.effect.*
-import java.security.SecureRandom
-import cats.effect.std.Random
+import cats.effect.std.SecureRandom
 import java.security.MessageDigest
 
 object Crypto:
   def hashPassword(raw: UserPassword): IO[HashedPassword] =
-    Random.javaSecuritySecureRandom[IO].flatMap { r =>
+    SecureRandom.javaSecuritySecureRandom[IO].flatMap { r =>
       for
         seed <- r.nextString(16)
         seeded = seed + ":" + raw.value

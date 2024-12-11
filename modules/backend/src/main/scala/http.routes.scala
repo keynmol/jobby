@@ -3,16 +3,15 @@ package jobby
 import cats.data.Kleisli
 import cats.effect.*
 import cats.implicits.*
+import jobby.health.*
 import jobby.spec.*
+import jobby.users.*
 import org.http4s.*
 import org.http4s.dsl.io.*
 import scribe.Scribe
 import smithy4s.http4s.SimpleRestJsonBuilder
 
 import java.nio.file.Paths
-
-import users.*
-import health.*
 
 def Routes(
     db: Database,

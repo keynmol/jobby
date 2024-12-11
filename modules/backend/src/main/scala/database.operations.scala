@@ -2,19 +2,13 @@ package jobby
 package database
 package operations
 
-import skunk.Session
-import skunk.PreparedCommand
 import cats.effect.IO
-import skunk.PreparedQuery
-
-import skunk.*
-import skunk.implicits.*
-
-import codecs.*
-import skunk.codec.all.*
-
-import jobby.spec.*
 import cats.effect.kernel.Resource
+import jobby.database.codecs.*
+import jobby.spec.*
+import skunk.*
+import skunk.codec.all.*
+import skunk.implicits.*
 
 sealed abstract class SqlQuery[I, O](val input: I, query: skunk.Query[I, O]):
   def use[A](session: Session[IO])(f: PreparedQuery[IO, I, O] => IO[A]) =
@@ -32,7 +26,7 @@ case class GetCredentials(login: UserLogin)
       sql"""
         select user_id, salted_hash 
         from users where lower(login) = lower($userLogin)
-      """.query(userId ~ hashedPassword)
+      """.query(userId *: hashedPassword)
     )
 
 case class CreateUser(login: UserLogin, password: HashedPassword)
@@ -116,7 +110,7 @@ case class CreateJob(
     attributes: JobAttributes,
     jobAdded: JobAdded
 ) extends SqlQuery(
-      ((company, attributes), jobAdded),
+      (company, attributes, jobAdded),
       sql"""
         insert into jobs(job_id, company_id, job_title, job_description, job_url, min_salary, max_salary, currency, added)
         values          (gen_random_uuid(), $companyId, $jobAttributes, $added)

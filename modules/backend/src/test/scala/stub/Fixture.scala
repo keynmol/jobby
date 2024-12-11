@@ -14,10 +14,11 @@ import org.http4s.client.Client
 import pdi.jwt.JwtAlgorithm.HS256
 import scribe.cats.*
 import skunk.util.Typer.Strategy
+import org.typelevel.otel4s.trace.Tracer
 
 object Fixture:
 
-  def resource(using natchez.Trace[IO]): Resource[cats.effect.IO, Probe] =
+  def resource(using Tracer[IO]): Resource[cats.effect.IO, Probe] =
     for
       db      <- Resource.eval(InMemoryDB.create)
       timeCop <- Resource.eval(SlowTimeCop.apply)

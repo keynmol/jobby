@@ -10,10 +10,11 @@ import jobby.spec.*
 import smithy4s.Newtype
 import database.codecs.*
 import database.operations.*
+import org.typelevel.otel4s.trace.Tracer
 
 object SkunkDatabase:
   def load(postgres: PgCredentials, skunkConfig: SkunkConfig)(using
-      natchez.Trace[IO]
+      Tracer[IO]
   ): Resource[IO, Database] =
     Session
       .pooled[IO](

@@ -1,25 +1,16 @@
 package jobby
 package users
 
-import java.security.MessageDigest
-import java.security.SecureRandom
-import java.time.Instant
-import java.util.UUID
-
 import cats.effect.*
-import cats.effect.std.Random
 import cats.implicits.*
-
-import jobby.database.operations as op
 import jobby.spec.*
-
-import org.http4s.HttpDate
-import org.http4s.RequestCookie
-import org.http4s.ResponseCookie
-import org.http4s.SameSite
+import jobby.validation.*
+import org.http4s.{HttpDate, RequestCookie, ResponseCookie, SameSite}
 import scribe.Scribe
 
-import validation.*
+import jobby.database.operations as op
+
+import java.time.Instant
 
 class UserServiceImpl(
     db: Database,
