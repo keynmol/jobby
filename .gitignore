@@ -4,6 +4,7 @@
 .bloop
 .bsp
 .sbt
+.vscode
 *.gch
 .cache
 target
@@ -16,3 +17,5 @@ frontend-build/node_modules
 node_modules
 .idea
 postgres-data
+
+.history

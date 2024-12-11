@@ -1,13 +1,8 @@
 package jobby
 
-import scala.util.Try
-import java.util.Base64
-import scala.util.control.NonFatal
 import cats.effect.IO
 import com.comcast.ip4s.Host
 import com.comcast.ip4s.Port
-import com.comcast.ip4s.Literals.host
-import scala.concurrent.duration.FiniteDuration
 import pdi.jwt.JwtAlgorithm
 import pdi.jwt.algorithms.JwtHmacAlgorithm
 import scala.concurrent.duration.*

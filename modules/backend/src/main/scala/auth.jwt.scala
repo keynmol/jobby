@@ -3,12 +3,8 @@ package jobby
 import jobby.spec.*
 import java.util.UUID
 import scala.util.Try
-import cats.effect.IO
 import scala.util.Failure
 import scala.util.Success
-import pdi.jwt.exceptions.JwtException
-import scala.concurrent.duration.FiniteDuration
-import scribe.Scribe
 
 object JWT:
   enum Kind:

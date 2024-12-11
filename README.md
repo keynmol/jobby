@@ -12,7 +12,7 @@ This is a full-stack Scala application (job posting board), made with the follow
 The app used to be deployed on 
 
 1. Platform.sh but I've run out of the free trial plan
-2. Heroku but they discontinued the free flans for everyone
+2. Heroku but they discontinued the free plans for everyone
 
 and now the app is deployed to the lovely Fly.io and here's the [**live version**](https://jobby-web.fly.dev/)
 
@@ -30,10 +30,11 @@ It's a companion repo for my [4-part blog post series](https://blog.indoorvivant
   Easiest way to run it is:
 
    ```
-   docker run -p 5432:5432 -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=jobby -d postgres
+   docker run --name jobby -p 5439:5432 -e POSTGRES_USER=jobby -e POSTGRES_PASSWORD=mysecretpassword -e POSTGRES_DB=jobby -d postgres
+
    ```
 
-  Take note of the password (`mysecretpassword`) and database (`jobby`), you will need to configure the app .
+  Take note of the user, password, database (`jobby`) and host port (`5439`), if you wish to reconfigure the connection .
 
 ### Running
 
@@ -52,9 +53,11 @@ The following settings are respected, and can be either be set as environment va
 deployments), or read from the `jobby.opts` file at the root of the project, for example:
 
 ```properties
+PG_USER=jobby
 PG_PASSWORD=mysecretpassword
 PG_DB=jobby
 LOCAL_DEPLOYMENT=true
+PG_PORT=5439
 ```
 
 * `PG_PASSWORD`, `PG_HOST`, `PG_DB`, `PG_USER`, `PG_PORT` - variables to configure access to Postgres

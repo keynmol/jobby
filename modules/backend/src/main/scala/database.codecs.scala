@@ -1,13 +1,11 @@
 package jobby
 package database
 
+import jobby.spec.*
 import skunk.Codec
 import skunk.codec.all.*
-import smithy4s.Newtype
-
-import jobby.spec.*
-import smithy4s.Timestamp
 import skunk.data.Type
+import smithy4s.{Newtype, Timestamp}
 
 object codecs:
   extension [T](c: Codec[T])
@@ -31,31 +29,31 @@ object codecs:
   val currency =
     `enum`[Currency](_.value, Currency.fromString, Type("currency_enum"))
 
-  val salaryRange = (minSalary ~ maxSalary ~ currency).gimap[SalaryRange]
+  val salaryRange = (minSalary *: maxSalary *: currency).to[SalaryRange]
 
   val added = timestamptz
     .imap(Timestamp.fromOffsetDateTime)(_.toOffsetDateTime)
     .as(JobAdded)
 
   val jobAttributes =
-    (jobTitle ~
-      jobDescription ~
-      jobUrl ~
-      salaryRange).gimap[JobAttributes]
+    (jobTitle *:
+      jobDescription *:
+      jobUrl *:
+      salaryRange).to[JobAttributes]
 
   val job =
-    (jobId ~
-      companyId ~
-      jobAttributes ~
-      added).gimap[Job]
+    (jobId *:
+      companyId *:
+      jobAttributes *:
+      added).to[Job]
 
   val companyAttributes =
-    (companyName ~
-      companyDescription ~
-      companyUrl).gimap[CompanyAttributes]
+    (companyName *:
+      companyDescription *:
+      companyUrl).to[CompanyAttributes]
 
   val company =
-    (companyId ~
-      userId ~
-      companyAttributes).gimap[Company]
+    (companyId *:
+      userId *:
+      companyAttributes).to[Company]
 end codecs

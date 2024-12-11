@@ -5,7 +5,8 @@ package frontend
 import scala.concurrent.duration.*
 import com.indoorvivants.weaver.playwright.*
 import org.http4s.*
-import natchez.Trace.Implicits.noop
+
+import org.typelevel.otel4s.trace.Tracer.Implicits.noop
 import cats.syntax.all.*
 import weaver.*
 import cats.effect.*

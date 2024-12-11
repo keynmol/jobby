@@ -26,6 +26,7 @@ import org.http4s.server.middleware.ResponseLogger.apply
 import org.http4s.server.middleware.ResponseLogger
 import org.http4s.Request
 import cats.effect.kernel.Ref
+import org.typelevel.otel4s.trace.Tracer
 
 object Fixture:
   private def parseJDBC(url: String) = IO(java.net.URI.create(url.substring(5)))
@@ -46,7 +47,7 @@ object Fixture:
       IO(f.migrate())
     }
 
-  def skunkConnection(using natchez.Trace[IO]) =
+  def skunkConnection(using Tracer[IO]) =
     postgresContainer
       .evalMap(cont => parseJDBC(cont.jdbcUrl).map(cont -> _))
       .evalTap { case (cont, _) =>
@@ -68,7 +69,7 @@ object Fixture:
 
       }
 
-  def resource(using natchez.Trace[IO]): Resource[cats.effect.IO, Probe] =
+  def resource(using Tracer[IO]): Resource[cats.effect.IO, Probe] =
     import scribe.{Logger, Level}
     val silenceOfTheLogs =
       Seq(

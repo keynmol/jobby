@@ -1,8 +1,8 @@
 package jobby
 package health
 
-import spec.*
 import cats.effect.IO
+import jobby.spec.*
 
 object HealthServiceImpl extends HealthService[IO]:
   override def healthCheck() =
