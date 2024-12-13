@@ -1,17 +1,9 @@
 package frontend
 
 import com.raquo.laminar.api.L.*
-import org.scalajs.dom
 import com.raquo.waypoint.Router
-import scala.scalajs.js.Date
-import cats.effect.IO
-
-import scala.concurrent.ExecutionContext.Implicits.global
-import jobby.spec.Tokens
-import jobby.spec.AccessToken
-import jobby.spec.CompanyAttributes
 import com.raquo.waypoint.SplitRender
-import com.raquo.waypoint.Router
+import org.scalajs.dom
 
 enum AuthEvent:
   case Check, Reset
@@ -20,7 +12,7 @@ enum AuthEvent:
 object Main:
 
   def renderPage(using
-      router: Router[Page]
+      router: Router[Page],
   )(using state: AppState, api: Api): Signal[HtmlElement] =
     SplitRender[Page, HtmlElement](router.currentPageSignal)
       .collectStatic(Page.Login)(pages.login)
@@ -51,25 +43,25 @@ object Main:
           a(Styles.logo, "Jobby", navigateTo(Page.LatestJobs)),
           span(
             Styles.logoTagline,
-            "because you're worth it (better job that is)"
+            "because you're worth it (better job that is)",
           ),
           p(
             small(
               "This is not a real job site, it's a project from a ",
               a(
                 href := "https://blog.indoorvivants.com/2022-06-10-smithy4s-fullstack-part-1",
-                "blog post series"
-              )
-            )
-          )
+                "blog post series",
+              ),
+            ),
+          ),
         ),
-        userToolbar.node
+        userToolbar.node,
       ),
       div(
         Styles.contentContainer,
         child <-- renderPage,
-        tokenRefresh.loop
-      )
+        tokenRefresh.loop,
+      ),
     )
 
     renderOnDomContentLoaded(
@@ -80,7 +72,7 @@ object Main:
         dom.document.querySelector("head").appendChild(sty.ref)
 
         app
-      }
+      },
     )
   end main
 end Main

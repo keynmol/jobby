@@ -1,0 +1,5 @@
+PG_USER=jobby
+PG_PASSWORD=mysecretpassword
+PG_DB=jobby
+LOCAL_DEPLOYMENT=true
+PG_PORT=5439

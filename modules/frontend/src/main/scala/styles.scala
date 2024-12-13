@@ -18,7 +18,7 @@ object Styles extends StyleSheet.Inline:
       backgroundAttachment := "fixed",
       backgroundRepeat.noRepeat,
       backgroundSize := "cover",
-      fontFamily :=! "'Wotfard',Futura,-apple-system,sans-serif"
+      fontFamily :=! "'Wotfard',Futura,-apple-system,sans-serif",
     )
     "html" - (
       height := 100.%%
@@ -29,7 +29,7 @@ object Styles extends StyleSheet.Inline:
     val container = style(
       display.flex,
       flexDirection.column,
-      gap := 15.px
+      gap := 15.px,
     )
 
   object jobListing:
@@ -37,11 +37,11 @@ object Styles extends StyleSheet.Inline:
     val container = style(
       backgroundColor := lightGray,
       padding         := 10.px,
-      borderRadius    := 8.px
+      borderRadius    := 8.px,
     )
     val deleteLink = style(
       color.darkred,
-      fontWeight.bold
+      fontWeight.bold,
     )
     val title = style(
       fontSize := 1.3.rem,
@@ -50,14 +50,14 @@ object Styles extends StyleSheet.Inline:
       fontStyle.italic,
       textDecorationLine.none,
       &.visited(color.black),
-      color.black
+      color.black,
     )
     val salaryRange = style(
-      fontSize := 2.rem
+      fontSize := 2.rem,
     )
     val description = style(
       fontSize   := 1.5.rem,
-      whiteSpace := "break-spaces"
+      whiteSpace := "break-spaces",
     )
 
     private val curButtonMixin = mixin(
@@ -67,14 +67,14 @@ object Styles extends StyleSheet.Inline:
       borderWidth := 1.px,
       borderColor := grey,
       borderStyle.solid,
-      borderRadius := 3.px
+      borderRadius := 3.px,
     )
     val currencyButton = styleF.bool {
       case true =>
         mixin(
           curButtonMixin,
           color.white,
-          backgroundColor.black
+          backgroundColor.black,
         )
       case false => mixin(curButtonMixin, backgroundColor.white)
 
@@ -84,12 +84,12 @@ object Styles extends StyleSheet.Inline:
   object company:
     val deleteLink = style(
       color.red,
-      fontWeight.bold
+      fontWeight.bold,
     )
     val container = style(
       display.flex,
       flexDirection.column,
-      gap := 15.px
+      gap := 15.px,
     )
     val name = style(color.white, fontSize := 2.rem)
 
@@ -97,16 +97,16 @@ object Styles extends StyleSheet.Inline:
       color.white,
       fontSize := 1.3.rem,
       margin   := 5.px,
-      whiteSpace.preWrap
+      whiteSpace.preWrap,
     )
     val url = style(
       color.white,
-      fontSize := 1.5.rem
+      fontSize := 1.5.rem,
     )
     val internalUrl = style(
       textDecorationLine.none,
       &.visited(color.white),
-      &.hover(textDecorationLine.underline)
+      &.hover(textDecorationLine.underline),
     )
 
     val nameUrl = style(
@@ -114,14 +114,14 @@ object Styles extends StyleSheet.Inline:
       fontStyle.italic,
       textDecorationLine.none,
       &.visited(color.black),
-      &.hover(textDecorationLine.underline)
+      &.hover(textDecorationLine.underline),
     )
   end company
 
   val container = style(
     padding  := 10.px,
     margin   := auto,
-    maxWidth := 1024.px
+    maxWidth := 1024.px,
   )
 
   val contentContainer = style(
@@ -131,19 +131,19 @@ object Styles extends StyleSheet.Inline:
     borderWidth     := 2.px,
     margin          := auto,
     maxWidth        := 1024.px,
-    backgroundColor := darkBlue
+    backgroundColor := darkBlue,
   )
 
   val headerContainer = style(
     display.flex,
     flexDirection.row,
     justifyContent.spaceBetween,
-    alignItems.center
+    alignItems.center,
   )
 
   val textInput = style(
     fontSize := 1.5.rem,
-    padding  := 5.px
+    padding  := 5.px,
   )
 
   val error = style(
@@ -152,11 +152,11 @@ object Styles extends StyleSheet.Inline:
     fontWeight.bold,
     color := maroon,
     backgroundColor.white,
-    margin := 5.px
+    margin := 5.px,
   )
 
   val contentTitle = style(
-    color.white
+    color.white,
   )
 
   val logo =
@@ -165,7 +165,7 @@ object Styles extends StyleSheet.Inline:
       fontSize     := 3.rem,
       textDecorationLine.none,
       &.visited(color.black),
-      &.hover(textDecorationLine.underline)
+      &.hover(textDecorationLine.underline),
     )
   val logoTagline = style(marginBottom := 10.px, display.block)
 
@@ -174,7 +174,7 @@ object Styles extends StyleSheet.Inline:
       display.flex,
       alignItems.end,
       justifyContent.right,
-      gap(10.px)
+      gap(10.px),
     )
     val button = style(
       padding := 4.px,
@@ -184,7 +184,7 @@ object Styles extends StyleSheet.Inline:
       borderBottomWidth := 4.px,
       borderBottomColor := black,
       backgroundColor   := white,
-      cursor.pointer
+      cursor.pointer,
     )
   end userToolbar
 
@@ -195,14 +195,14 @@ object Styles extends StyleSheet.Inline:
       display.flex,
       width := 100.%%,
       flexDirection.column,
-      gap := 15.px
+      gap := 15.px,
     )
     val inputGroup = style(
       display.flex,
       width := 100.%%,
       flexDirection.row,
       alignContent.stretch,
-      gap := 15.px
+      gap := 15.px,
     )
 
     val inputLabel = style(
@@ -211,19 +211,19 @@ object Styles extends StyleSheet.Inline:
       width      := 100.%%,
       fontSize   := 2.rem,
       color.white,
-      textAlign.right
+      textAlign.right,
     )
     val inputField = style(
       flexGrow := "3",
       padding  := 4.px,
       fontSize := 1.2.rem,
       width    := 100.%%,
-      backgroundColor.white
+      backgroundColor.white,
     )
 
     val submit = style(
       padding  := 5.px,
-      fontSize := 2.rem
+      fontSize := 2.rem,
     )
   end form
 

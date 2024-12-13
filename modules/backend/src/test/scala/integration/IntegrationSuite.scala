@@ -3,11 +3,7 @@ package tests
 package integration
 
 import cats.effect.*
-import cats.effect.std.*
-import cats.syntax.all.*
-import jobby.spec.*
 import org.typelevel.otel4s.trace.Tracer.Implicits.noop
-
 import weaver.*
 
 object Resources extends GlobalResource:

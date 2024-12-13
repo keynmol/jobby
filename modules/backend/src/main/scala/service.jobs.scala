@@ -3,8 +3,9 @@ package jobby
 import cats.effect.*
 import cats.implicits.*
 import jobby.spec.*
-import database.operations as op
 import jobby.validation.*
+
+import database.operations as op
 
 class JobServiceImpl(db: Database, auth: HttpAuth, timeCop: TimeCop)
     extends JobService[IO]:
@@ -17,13 +18,13 @@ class JobServiceImpl(db: Database, auth: HttpAuth, timeCop: TimeCop)
   override def createJob(
       authHeader: AuthHeader,
       companyId: CompanyId,
-      attributes: JobAttributes
+      attributes: JobAttributes,
   ): IO[CreateJobOutput] =
     for
       userId        <- auth.access(authHeader)
       companyLookup <- db.option(op.GetCompanyById(companyId))
       company <- IO.fromOption(companyLookup)(
-        ValidationError("company not found")
+        ValidationError("company not found"),
       )
 
       _ <- IO.raiseUnless(company.owner_id == userId)(ForbiddenError())
@@ -32,7 +33,7 @@ class JobServiceImpl(db: Database, auth: HttpAuth, timeCop: TimeCop)
         validateJobTitle(attributes.title),
         validateJobDescription(attributes.description),
         validateJobUrl(attributes.url),
-        validateSalaryRange(attributes.range)
+        validateSalaryRange(attributes.range),
       ).traverse(IO.fromEither)
 
       added <- timeCop.timestampNT(JobAdded)
@@ -42,11 +43,11 @@ class JobServiceImpl(db: Database, auth: HttpAuth, timeCop: TimeCop)
           op.CreateJob(
             companyId,
             attributes,
-            added
-          )
+            added,
+          ),
         )
       jobId <- IO.fromOption(createdJob)(
-        ValidationError("well you *must have* done something wrong")
+        ValidationError("well you *must have* done something wrong"),
       )
     yield CreateJobOutput(jobId)
     end for
@@ -66,7 +67,7 @@ class JobServiceImpl(db: Database, auth: HttpAuth, timeCop: TimeCop)
       job           <- getJob(id)
       companyLookup <- db.option(op.GetCompanyById(job.companyId))
       company <- IO.fromOption(companyLookup)(
-        ValidationError("company not found")
+        ValidationError("company not found"),
       )
       _ <- IO.raiseUnless(company.owner_id == userId)(ForbiddenError())
       _ <- db.option(op.DeleteJobById(id))

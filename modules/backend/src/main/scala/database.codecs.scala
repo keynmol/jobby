@@ -5,7 +5,8 @@ import jobby.spec.*
 import skunk.Codec
 import skunk.codec.all.*
 import skunk.data.Type
-import smithy4s.{Newtype, Timestamp}
+import smithy4s.Newtype
+import smithy4s.Timestamp
 
 object codecs:
   extension [T](c: Codec[T])

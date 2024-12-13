@@ -3,13 +3,12 @@ package tests
 
 import cats.effect.*
 import cats.effect.std.*
-
 import scribe.*
 import scribe.cats.*
 
 class InMemoryLogger private (
     val logs: IO[Vector[LogRecord]],
-    val scribeLogger: Scribe[IO]
+    val scribeLogger: Scribe[IO],
 )
 
 object InMemoryLogger:
@@ -29,7 +28,7 @@ object InMemoryLogger:
 
         new InMemoryLogger(
           ref.get,
-          logger
+          logger,
         )
       }
     }

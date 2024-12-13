@@ -2,7 +2,6 @@ package jobby
 package tests
 
 import jobby.spec.*
-import cats.effect.IO
 
 trait CompaniesSuite:
   self: JobbySuite =>
@@ -17,7 +16,7 @@ trait CompaniesSuite:
       companyId <- api.companies
         .createCompany(
           authHeader,
-          attributes
+          attributes,
         )
         .map(_.id)
 
@@ -26,7 +25,7 @@ trait CompaniesSuite:
       attributes.name == retrieved.attributes.name,
       attributes.url == retrieved.attributes.url,
       attributes.description == retrieved.attributes.description,
-      userId == retrieved.owner_id
+      userId == retrieved.owner_id,
     )
     end for
   }
@@ -40,7 +39,7 @@ trait CompaniesSuite:
 
       company <- api.companies.createCompany(
         ownerAuth,
-        attributes
+        attributes,
       )
 
       byRando <- api.companies.deleteCompany(rando, company.id).attempt
@@ -59,7 +58,7 @@ trait CompaniesSuite:
     yield expect.all(
       afterDeletion == Left(CompanyNotFound()),
       jobsBeforeDeletion.jobs.nonEmpty,
-      jobsAfterDeletion.jobs.isEmpty
+      jobsAfterDeletion.jobs.isEmpty,
     )
     end for
   }

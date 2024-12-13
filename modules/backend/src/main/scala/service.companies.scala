@@ -2,7 +2,7 @@ package jobby
 
 import cats.effect.*
 import cats.syntax.all.*
-import jobby.database.{operations as op}
+import jobby.database.operations as op
 import jobby.spec.*
 import jobby.validation.*
 
@@ -10,18 +10,18 @@ class CompaniesServiceImpl(db: Database, httpAuth: HttpAuth)
     extends CompaniesService[IO]:
   override def createCompany(
       auth: AuthHeader,
-      attributes: CompanyAttributes
+      attributes: CompanyAttributes,
   ): IO[CreateCompanyOutput] =
     httpAuth.access(auth).flatMap { userId =>
       val validation = List(
         validateCompanyName(attributes.name),
         validateCompanyDescription(attributes.description),
-        validateCompanyUrl(attributes.url)
+        validateCompanyUrl(attributes.url),
       ).traverse(IO.fromEither)
 
       validation *>
         db.option(
-          op.CreateCompany(userId, attributes)
+          op.CreateCompany(userId, attributes),
         ).flatMap {
           case None => IO.raiseError(ValidationError("Company already exists"))
           case Some(id) => IO.pure(CreateCompanyOutput(id))

@@ -1,13 +1,7 @@
 package frontend
 package pages
 
-import views.*
-
 import com.raquo.laminar.api.L.*
-import jobby.spec.*
-import scala.scalajs.js.Date
-import scala.concurrent.ExecutionContext.Implicits.global
-
 import com.raquo.waypoint.Router
 import jobby.spec.GetCompaniesOutput
 
@@ -28,11 +22,11 @@ def latest_jobs(using state: AppState, api: Api, router: Router[Page]) =
                 mapping
                   .get(job.companyId)
                   .map(company =>
-                    JobListing(job, company.id, company.attributes.name).node
+                    JobListing(job, company.id, company.attributes.name).node,
                   )
               }
           }
-        })
-    )
+        }),
+    ),
   )
 end latest_jobs

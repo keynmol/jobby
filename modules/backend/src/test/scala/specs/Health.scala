@@ -2,8 +2,6 @@ package jobby
 package tests
 
 import jobby.spec.*
-import cats.effect.IO
-import org.http4s.ResponseCookie
 
 trait HealthSuite:
   self: JobbySuite =>

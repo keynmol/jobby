@@ -10,7 +10,7 @@ object CompanyListing:
   def apply(
       company: jobby.spec.Company,
       allowDelete: Boolean = false,
-      onDelete: Company => Unit = _ => ()
+      onDelete: Company => Unit = _ => (),
   )(using Router[Page]): CompanyListing =
     import company.attributes.*
 
@@ -26,12 +26,12 @@ object CompanyListing:
               val sure =
                 org.scalajs.dom.window.confirm(
                   s"Are you sure you want to delete ${company.attributes.name}?\n" +
-                    "Note: the company will still exist in the physical world"
+                    "Note: the company will still exist in the physical world",
                 )
 
               if sure then onDelete(company)
-            }
-          )
+            },
+          ),
         )
       }
 
@@ -43,21 +43,21 @@ object CompanyListing:
           navigateTo(Page.CompanyPage(company.id)),
           idAttr := "company-profile-name",
           name.value,
-          Styles.company.internalUrl
+          Styles.company.internalUrl,
         ),
-        span(" ", deleteLink)
+        span(" ", deleteLink),
       ),
       a(
         url.value,
         idAttr := "company-profile-url",
         href   := url.value,
-        Styles.company.url
+        Styles.company.url,
       ),
       pre(
         description.value,
         idAttr := "company-profile-description",
-        Styles.company.description
-      )
+        Styles.company.description,
+      ),
     )
 
     CompanyListing(node)

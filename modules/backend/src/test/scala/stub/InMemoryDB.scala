@@ -2,21 +2,15 @@ package jobby
 package tests
 package stub
 
-import java.util.UUID
-
 import cats.effect.*
-import cats.effect.std.*
 import cats.syntax.all.*
-
 import jobby.database.operations.*
 import jobby.spec.*
-
-import com.comcast.ip4s.*
 
 case class InMemoryDB(
     state: Ref[IO, InMemoryDB.State],
     gen: Generator,
-    timecop: TimeCop
+    timecop: TimeCop,
 ) extends Database:
 
   private def opt[T](s: InMemoryDB.State => Option[T]): fs2.Stream[IO, T] =
@@ -67,8 +61,8 @@ case class InMemoryDB(
             st.copy(
               companies = st.companies.filterNot(matches),
               jobs = st.jobs.filterNot(
-                _.companyId == companyId
-              ) // simulate cascade delete
+                _.companyId == companyId,
+              ), // simulate cascade delete
             )     -> Seq("ok")
           else st -> Seq.empty
         }
@@ -91,9 +85,9 @@ case class InMemoryDB(
                     Company(
                       companyId,
                       userId,
-                      attributes
-                    )
-                  )
+                      attributes,
+                    ),
+                  ),
               )
             }
             .as(companyId)
@@ -108,7 +102,7 @@ case class InMemoryDB(
               id = jobId,
               companyId = companyId,
               attributes = attributes,
-              added = ja
+              added = ja,
             )
 
             state.update(st => st.copy(jobs = st.jobs.appended(job))).as(jobId)
@@ -121,14 +115,14 @@ case class InMemoryDB(
         fs2.Stream
           .eval {
             state.get.map(
-              _.jobs.sortBy(_.added.value.epochSecond).reverse.take(20)
+              _.jobs.sortBy(_.added.value.epochSecond).reverse.take(20),
             )
           }
           .flatMap(fs2.Stream.emits)
 
       case other =>
         fs2.Stream.raiseError(
-          new Exception(s"Operation $other is not implemented in InMemoryDB")
+          new Exception(s"Operation $other is not implemented in InMemoryDB"),
         )
 end InMemoryDB
 
@@ -137,7 +131,7 @@ object InMemoryDB:
   case class State(
       jobs: Vector[Job] = Vector.empty,
       companies: Vector[Company] = Vector.empty,
-      users: Vector[(UserId, UserLogin, HashedPassword)] = Vector.empty
+      users: Vector[(UserId, UserLogin, HashedPassword)] = Vector.empty,
   )
 
   def create =

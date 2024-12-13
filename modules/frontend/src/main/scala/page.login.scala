@@ -1,16 +1,16 @@
 package frontend
 package pages
 
-import views.*
+import scala.concurrent.ExecutionContext.Implicits.global
+import scala.scalajs.js.Date
 
 import com.raquo.laminar.api.L.*
-import jobby.spec.AccessToken
-import jobby.spec.Tokens
-import jobby.spec.AuthHeader
-import scala.scalajs.js.Date
-import scala.concurrent.ExecutionContext.Implicits.global
-
 import com.raquo.waypoint.Router
+import jobby.spec.AccessToken
+import jobby.spec.AuthHeader
+import jobby.spec.Tokens
+
+import views.*
 
 def login(using state: AppState, api: Api, router: Router[Page]) =
   val error = Var(Option.empty[String])
@@ -20,9 +20,9 @@ def login(using state: AppState, api: Api, router: Router[Page]) =
         _.users
           .login(
             login,
-            password
+            password,
           )
-          .attempt
+          .attempt,
       )
       .collect {
         case l @ Left(_) =>
@@ -34,9 +34,9 @@ def login(using state: AppState, api: Api, router: Router[Page]) =
               AuthState.Token(
                 AuthHeader("Bearer " + tok),
                 new Date,
-                expiresIn.value
-              )
-            )
+                expiresIn.value,
+              ),
+            ),
           )
 
           redirectTo(Page.LatestJobs)

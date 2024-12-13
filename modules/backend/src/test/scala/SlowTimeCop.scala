@@ -1,7 +1,8 @@
 package jobby
 
-import cats.effect.*
 import java.time.OffsetDateTime
+
+import cats.effect.*
 
 object SlowTimeCop:
   def apply: IO[TimeCop] = Ref.of[IO, Int](0).map { daysRef =>

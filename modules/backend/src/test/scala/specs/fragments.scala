@@ -19,7 +19,7 @@ class Fragments(probe: Probe):
 
   def createCompany(
       authHeader: AuthHeader,
-      attributes: Option[CompanyAttributes] = None
+      attributes: Option[CompanyAttributes] = None,
   ) =
     for
       generatedAttributes <- companyAttributes
@@ -27,7 +27,7 @@ class Fragments(probe: Probe):
       companyId <- api.companies
         .createCompany(
           authHeader,
-          attributes.getOrElse(generatedAttributes)
+          attributes.getOrElse(generatedAttributes),
         )
         .map(_.id)
     yield companyId
@@ -40,7 +40,7 @@ class Fragments(probe: Probe):
       attributes = CompanyAttributes(
         companyName,
         companyDescription,
-        companyUrl
+        companyUrl,
       )
     yield attributes
 

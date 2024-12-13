@@ -6,15 +6,12 @@ import scala.concurrent.duration.*
 
 import cats.effect.IO
 import cats.effect.Resource
-import cats.syntax.all.*
-
 import com.comcast.ip4s.*
 import org.http4s.Uri
 import org.http4s.client.Client
-import pdi.jwt.JwtAlgorithm.HS256
-import scribe.cats.*
-import skunk.util.Typer.Strategy
 import org.typelevel.otel4s.trace.Tracer
+import pdi.jwt.JwtAlgorithm.HS256
+import skunk.util.Typer.Strategy
 
 object Fixture:
 
@@ -27,7 +24,7 @@ object Fixture:
         appConfig,
         db,
         logger.scribeLogger,
-        timeCop
+        timeCop,
       ).routes
       client = Client.fromHttpApp(routes)
       generator <- Resource.eval(Generator.create)
@@ -36,7 +33,7 @@ object Fixture:
           client,
           Uri.unsafeFromString("http://localhost"),
           appConfig,
-          logger
+          logger,
         )
     yield probe
     end for
@@ -47,12 +44,12 @@ object Fixture:
     HS256,
     _ => "jobby:token",
     _ => 5.minutes,
-    _ => "jobby:issuer"
+    _ => "jobby:issuer",
   )
   val skunk = SkunkConfig(
     maxSessions = 0,
     strategy = Strategy.BuiltinsOnly,
-    debug = false
+    debug = false,
   )
   val http = HttpConfig(host"localhost", port"9914", Deployment.Local)
   val misc = MiscConfig(latestJobs = 20)

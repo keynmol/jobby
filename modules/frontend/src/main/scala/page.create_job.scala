@@ -1,13 +1,11 @@
 package frontend
 package pages
 
-import views.*
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import com.raquo.laminar.api.L.*
-import jobby.spec.*
-import scala.concurrent.ExecutionContext.Implicits.global
 import com.raquo.waypoint.Router
-import java.util.UUID
+import jobby.spec.*
 
 def create_job(using state: AppState, api: Api, router: Router[Page]) =
   val error = Var(Option.empty[String])
@@ -22,9 +20,9 @@ def create_job(using state: AppState, api: Api, router: Router[Page]) =
                 .createJob(
                   auth = h,
                   companyId = companyId,
-                  attributes = cj.attributes
+                  attributes = cj.attributes,
                 )
-                .attempt
+                .attempt,
             )
             .collect {
               case Left(ValidationError(msg)) =>
@@ -44,20 +42,20 @@ def create_job(using state: AppState, api: Api, router: Router[Page]) =
         div(
           p(
             Styles.jobListing.sampleText,
-            "Here's what the listing will look like:"
+            "Here's what the listing will look like:",
           ),
           JobListing(
             Job(
               id = JobId(cid.value),
               companyId = cid,
               attributes = cj.attributes,
-              added = JobAdded(smithy4s.Timestamp.nowUTC())
+              added = JobAdded(smithy4s.Timestamp.nowUTC()),
             ),
             cid,
-            CompanyName("some company")
-          ).node
+            CompanyName("some company"),
+          ).node,
         )
       }
-    }
+    },
   )
 end create_job

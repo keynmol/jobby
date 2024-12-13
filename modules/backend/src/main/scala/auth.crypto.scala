@@ -1,10 +1,11 @@
 package jobby
 package users
 
-import jobby.spec.*
+import java.security.MessageDigest
+
 import cats.effect.*
 import cats.effect.std.SecureRandom
-import java.security.MessageDigest
+import jobby.spec.*
 
 object Crypto:
   def hashPassword(raw: UserPassword): IO[HashedPassword] =

@@ -18,7 +18,7 @@ def validateJobDescription(login: JobDescription) =
   if str.length == 0 then err("Description cannot be empty")
   else if str.length < minLength || str.length > maxLength then
     err(
-      s"Description cannot be shorter than $minLength or longer than $maxLength characters"
+      s"Description cannot be shorter than $minLength or longer than $maxLength characters",
     )
   else ok
 end validateJobDescription

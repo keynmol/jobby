@@ -6,7 +6,6 @@ import java.util.UUID
 import cats.effect.*
 import cats.effect.std.*
 import cats.syntax.all.*
-
 import smithy4s.Newtype
 
 case class Generator private (random: Random[IO], uuid: UUIDGen[IO]):
@@ -23,7 +22,7 @@ case class Generator private (random: Random[IO], uuid: UUIDGen[IO]):
 
   def str(
       toNewType: Newtype[String],
-      lengthRange: Range = 0 to 100
+      lengthRange: Range = 0 to 100,
   ): IO[toNewType.Type] =
     for
       length <- random.betweenInt(lengthRange.start, lengthRange.end)

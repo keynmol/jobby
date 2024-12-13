@@ -1,29 +1,24 @@
 package frontend
 package pages
 
-import views.*
-
-import com.raquo.laminar.api.L.*
-import jobby.spec.AccessToken
-import jobby.spec.Tokens
-import jobby.spec.AuthHeader
-import scala.scalajs.js.Date
 import scala.concurrent.ExecutionContext.Implicits.global
-import com.raquo.waypoint.Router
 
 import cats.syntax.all.*
+import com.raquo.airstream.core.EventStream
+import com.raquo.laminar.api.L.*
+import com.raquo.waypoint.Router
+import jobby.spec.AuthHeader
 import jobby.spec.Company
 import jobby.spec.Job
-import com.raquo.airstream.core.EventStream
 
 def profile(using state: AppState, api: Api, router: Router[Page]) =
-  val myCompanies = state.$authHeader.flatMap {
+  val myCompanies = state.$authHeader.flatMapSwitch {
     case None => Signal.fromValue(List.empty)
     case Some(tok) =>
       val result: EventStream[List[(Company, List[Job])]] = api.stream { a =>
         a.companies.myCompanies(tok).map(_.companies).flatMap { companies =>
           companies.traverse(company =>
-            a.jobs.listJobs(company.id).map(_.jobs).map(company -> _)
+            a.jobs.listJobs(company.id).map(_.jobs).map(company -> _),
           )
         }
       }
@@ -38,7 +33,7 @@ def profile(using state: AppState, api: Api, router: Router[Page]) =
           onDelete = company =>
             api.future(_.companies.deleteCompany(tok, company.id)).map { _ =>
               deletedCompanies.update(_ + company.id)
-            }
+            },
         ).node
 
       inline def renderJob(job: Job, company: Company) =
@@ -50,7 +45,7 @@ def profile(using state: AppState, api: Api, router: Router[Page]) =
           onDelete = job =>
             api.future(_.jobs.deleteJob(tok, job.id)).map { _ =>
               deleted.update(_ + job.id)
-            }
+            },
         ).node
 
       result
@@ -67,16 +62,16 @@ def profile(using state: AppState, api: Api, router: Router[Page]) =
                         jobs.filterNot(j => isDeleted(j.id)).map { job =>
                           renderJob(job, company)
                         }
-                      }
-                    )
+                      },
+                    ),
                   )
-              }
+              },
             )
           }
         }
         .startWith(List(i("You haven't created any companies yet...")))
   }
   div(
-    children <-- myCompanies
+    children <-- myCompanies,
   )
 end profile

@@ -1,22 +1,24 @@
 package jobby
 package users
 
+import java.time.Instant
+
 import cats.effect.*
 import cats.implicits.*
+import jobby.database.operations as op
 import jobby.spec.*
 import jobby.validation.*
-import org.http4s.{HttpDate, RequestCookie, ResponseCookie, SameSite}
+import org.http4s.HttpDate
+import org.http4s.RequestCookie
+import org.http4s.ResponseCookie
+import org.http4s.SameSite
 import scribe.Scribe
-
-import jobby.database.operations as op
-
-import java.time.Instant
 
 class UserServiceImpl(
     db: Database,
     auth: HttpAuth,
     logger: Scribe[IO],
-    deployment: Deployment
+    deployment: Deployment,
 ) extends UserService[IO]:
 
   override def login(login: UserLogin, password: UserPassword): IO[Tokens] =
@@ -43,11 +45,11 @@ class UserServiceImpl(
                   secureCookie(
                     "refresh_token",
                     refresh,
-                    HttpDate.unsafeFromInstant(instant)
-                  )
-                )
+                    HttpDate.unsafeFromInstant(instant),
+                  ),
+                ),
               ),
-              expires_in = Some(TokenExpiration(maxAgeAccess.toSeconds.toInt))
+              expires_in = Some(TokenExpiration(maxAgeAccess.toSeconds.toInt)),
             )
           }
         end if
@@ -72,7 +74,7 @@ class UserServiceImpl(
 
   override def refresh(
       refreshToken: Option[RefreshToken],
-      logout: Option[Boolean]
+      logout: Option[Boolean],
   ): IO[RefreshOutput] =
     val extractCookie =
       refreshToken match
@@ -93,18 +95,18 @@ class UserServiceImpl(
                 "",
                 maxAge = Some(0L),
                 secure = deployment == Deployment.Live,
-                path = Some("/api/users/refresh")
-              ).renderString
-            )
+                path = Some("/api/users/refresh"),
+              ).renderString,
+            ),
           ),
-          expires_in = TokenExpiration(0)
-        )
+          expires_in = TokenExpiration(0),
+        ),
       )
     else
       extractCookie.flatMap {
         case None =>
           IO.raiseError(
-            UnauthorizedError(message = Some("Refresh cookie is missing"))
+            UnauthorizedError(message = Some("Refresh cookie is missing")),
           )
         case Some(tok) =>
           auth.refresh(RefreshToken(tok.content)).flatMap { userId =>
@@ -113,8 +115,8 @@ class UserServiceImpl(
             IO.pure(
               RefreshOutput(
                 access_token = Some(AccessToken(auth_token)),
-                expires_in = TokenExpiration(expiresIn.toSeconds.toInt)
-              )
+                expires_in = TokenExpiration(expiresIn.toSeconds.toInt),
+              ),
             )
           }
       }
@@ -129,6 +131,6 @@ class UserServiceImpl(
       secure = deployment == Deployment.Live,
       path = Some("/api/users/refresh"),
       expires = Some(expires),
-      sameSite = Some(SameSite.Strict)
+      sameSite = Some(SameSite.Strict),
     ).renderString
 end UserServiceImpl

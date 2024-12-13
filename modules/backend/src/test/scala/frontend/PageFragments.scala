@@ -2,21 +2,16 @@ package jobby
 package tests
 package frontend
 
-import scala.concurrent.duration.*
-import com.indoorvivants.weaver.playwright.*
-import org.http4s.*
-
-import org.typelevel.otel4s.trace.Tracer.Implicits.noop
-import cats.syntax.all.*
-import weaver.*
 import cats.effect.*
-import java.nio.file.Paths
+import com.indoorvivants.weaver.playwright.*
 import jobby.spec.*
+import org.http4s.*
+import weaver.*
 
 class PageFragments(
     pc: PageContext,
     probe: Probe,
-    policy: PlaywrightRetry
+    policy: PlaywrightRetry,
 ):
   import pc.*
 
@@ -32,7 +27,7 @@ class PageFragments(
       _ <- eventually(page(_.url()).map(Uri.unsafeFromString)) { u =>
         expect.same(
           u.path.dropEndsWithSlash.toAbsolute.renderString,
-          "/companies/create"
+          "/companies/create",
         )
       }
       _ <- locator("#input-company-name").map(_.fill(attributes.name.value))

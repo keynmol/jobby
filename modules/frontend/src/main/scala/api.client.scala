@@ -1,26 +1,20 @@
 package frontend
 
-import java.util.UUID
-
 import scala.concurrent.Future
 
 import cats.effect.IO
 import cats.effect.unsafe.implicits.global
-
+import com.raquo.airstream.core.EventStream as LaminarStream
 import jobby.spec.*
-
 import org.http4s.*
 import org.http4s.dom.*
 import org.scalajs.dom
 import smithy4s.http4s.*
-import cats.effect.std.Dispatcher
-
-import com.raquo.airstream.core.EventStream as LaminarStream
 
 class Api private (
     val companies: CompaniesService[IO],
     val jobs: JobService[IO],
-    val users: UserService[IO]
+    val users: UserService[IO],
 ):
   import org.scalajs.macrotaskexecutor.MacrotaskExecutor.Implicits.*
   def future[A](a: Api => IO[A]): Future[A] =
@@ -31,7 +25,7 @@ class Api private (
 end Api
 
 object Api:
-  def create(location: String = dom.window.location.origin.get) =
+  def create(location: String = dom.window.location.origin) =
     val uri = Uri.unsafeFromString(location)
 
     val client = FetchClientBuilder[IO].create
@@ -40,21 +34,21 @@ object Api:
       SimpleRestJsonBuilder(CompaniesService)
         .client(client)
         .uri(uri)
-        .use
+        .make
         .fold(throw _, identity)
 
     val jobs =
       SimpleRestJsonBuilder(JobService)
         .client(client)
         .uri(uri)
-        .use
+        .make
         .fold(throw _, identity)
 
     val users =
       SimpleRestJsonBuilder(UserService)
         .client(client)
         .uri(uri)
-        .use
+        .make
         .fold(throw _, identity)
 
     Api(companies, jobs, users)
