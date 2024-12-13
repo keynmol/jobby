@@ -6,18 +6,18 @@ import jobby.spec.*
 
 case class Credentials(
     login: UserLogin,
-    password: UserPassword
+    password: UserPassword,
 )
 
 case class CredentialsForm private (
-    node: HtmlElement
+    node: HtmlElement,
 )
 
 object CredentialsForm:
   def apply(
       submitButton: String,
       submit: Observer[Credentials],
-      error: Signal[Option[String]]
+      error: Signal[Option[String]],
   ) =
     val credentials = Var(Credentials(UserLogin(""), UserPassword("")))
 
@@ -39,8 +39,8 @@ object CredentialsForm:
             Styles.textInput,
             idAttr := "credentials-login",
             tpe    := "text",
-            onInput.mapToValue.map(UserLogin.apply) --> loginWriter
-          )
+            onInput.mapToValue.map(UserLogin.apply) --> loginWriter,
+          ),
         ),
         inputGroup(
           "password",
@@ -48,16 +48,16 @@ object CredentialsForm:
             Styles.textInput,
             idAttr := "credentials-password",
             tpe    := "password",
-            onInput.mapToValue.map(UserPassword.apply) --> passwordWriter
-          )
+            onInput.mapToValue.map(UserPassword.apply) --> passwordWriter,
+          ),
         ),
         button(
           Styles.form.submit,
           idAttr := "credentials-submit",
           submitButton,
-          tpe := "submit"
-        )
-      )
+          tpe := "submit",
+        ),
+      ),
     )
 
     new CredentialsForm(node)

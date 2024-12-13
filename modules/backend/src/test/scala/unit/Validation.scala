@@ -2,17 +2,16 @@ package jobby
 package tests
 package unit
 
-import weaver.*
 import jobby.spec.*
-
-import weaver.scalacheck.*
 import org.scalacheck.Gen
+import weaver.*
+import weaver.scalacheck.*
 
 object ValidationPropertyTests extends SimpleIOSuite with Checkers:
   override def checkConfig: CheckConfig =
     CheckConfig.default.copy(
       minimumSuccessful = 500,
-      initialSeed = Some(13378008L)
+      initialSeed = Some(13378008L),
     )
 
   test("users: username") {
@@ -24,7 +23,7 @@ object ValidationPropertyTests extends SimpleIOSuite with Checkers:
         expect(
           trimmed.length < 12
             || trimmed.length > 50
-            || trimmed.isEmpty
+            || trimmed.isEmpty,
         )
     }
   }
@@ -39,7 +38,7 @@ object ValidationPropertyTests extends SimpleIOSuite with Checkers:
         expect(
           trimmed.length < 12
             || trimmed.length > 128
-            || str.exists(_.isWhitespace)
+            || str.exists(_.isWhitespace),
         )
     }
   }
@@ -54,7 +53,7 @@ object ValidationPropertyTests extends SimpleIOSuite with Checkers:
         expect(
           trimmed.isEmpty
             || trimmed.length > 100
-            || trimmed.length < 3
+            || trimmed.length < 3,
         )
     }
   }
@@ -71,7 +70,7 @@ object ValidationPropertyTests extends SimpleIOSuite with Checkers:
         expect(
           trimmed.isEmpty
             || trimmed.length < 100
-            || trimmed.length > 5000
+            || trimmed.length > 5000,
         )
     }
   }
@@ -86,7 +85,7 @@ object ValidationPropertyTests extends SimpleIOSuite with Checkers:
         expect(
           trimmed.isEmpty
             || trimmed.length < 10
-            || trimmed.length > 50
+            || trimmed.length > 50,
         )
     }
   }
@@ -101,7 +100,7 @@ object ValidationPropertyTests extends SimpleIOSuite with Checkers:
         expect(
           trimmed.trim.isEmpty
             || trimmed.length < 100
-            || trimmed.length > 5000
+            || trimmed.length > 5000,
         )
     }
   }
@@ -115,7 +114,7 @@ object ValidationPropertyTests extends SimpleIOSuite with Checkers:
       yield SalaryRange(
         min = MinSalary(min),
         max = MaxSalary(max),
-        currency = currency
+        currency = currency,
       )
 
     given cats.Show[SalaryRange] = cats.Show.fromToString
@@ -128,7 +127,7 @@ object ValidationPropertyTests extends SimpleIOSuite with Checkers:
         expect(
           range.min.value > range.max.value
             || range.min.value <= 0
-            || range.max.value <= 0
+            || range.max.value <= 0,
         )
     }
   }

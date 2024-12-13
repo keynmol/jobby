@@ -3,9 +3,7 @@ package tests
 
 import cats.effect.*
 import cats.syntax.all.*
-
 import jobby.spec.*
-
 import org.http4s.*
 import org.http4s.client.*
 import smithy4s.http4s.SimpleRestJsonBuilder
@@ -14,7 +12,7 @@ case class Api(
     companies: CompaniesService[IO],
     jobs: JobService[IO],
     users: UserService[IO],
-    health: HealthService[IO]
+    health: HealthService[IO],
 )
 
 object Api:
@@ -23,27 +21,27 @@ object Api:
       SimpleRestJsonBuilder(CompaniesService)
         .client(client)
         .uri(uri)
-        .use
+        .make,
     )
     val jobs = IO.fromEither(
       SimpleRestJsonBuilder(JobService)
         .client(client)
         .uri(uri)
-        .use
+        .make,
     )
 
     val users = IO.fromEither(
       SimpleRestJsonBuilder(UserService)
         .client(client)
         .uri(uri)
-        .use
+        .make,
     )
 
     val health = IO.fromEither(
       SimpleRestJsonBuilder(HealthService)
         .client(client)
         .uri(uri)
-        .use
+        .make,
     )
 
     (companies, jobs, users, health).mapN(Api.apply)

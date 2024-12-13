@@ -1,14 +1,14 @@
 package jobby
 
-import skunk.util.Twiddler
 import scala.deriving.Mirror
 
 import skunk.*
 import skunk.implicits.*
+import skunk.util.Twiddler
 
 implicit def product7[P <: Product, A, B, C, D, E, F, G](implicit
     m: Mirror.ProductOf[P],
-    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G)
+    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G),
 ): Twiddler[P] { type Out = A ~ B ~ C ~ D ~ E ~ F ~ G } =
   new Twiddler[P]:
     type Out = A ~ B ~ C ~ D ~ E ~ F ~ G
@@ -19,7 +19,7 @@ implicit def product7[P <: Product, A, B, C, D, E, F, G](implicit
 
 implicit def product8[P <: Product, A, B, C, D, E, F, G, H](implicit
     m: Mirror.ProductOf[P],
-    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H)
+    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H),
 ): Twiddler[P] { type Out = A ~ B ~ C ~ D ~ E ~ F ~ G ~ H } =
   new Twiddler[P]:
     type Out = A ~ B ~ C ~ D ~ E ~ F ~ G ~ H
@@ -31,7 +31,7 @@ implicit def product8[P <: Product, A, B, C, D, E, F, G, H](implicit
 
 implicit def product9[P <: Product, A, B, C, D, E, F, G, H, I](implicit
     m: Mirror.ProductOf[P],
-    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I)
+    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I),
 ): Twiddler[P] { type Out = A ~ B ~ C ~ D ~ E ~ F ~ G ~ H ~ I } =
   new Twiddler[P]:
     type Out = A ~ B ~ C ~ D ~ E ~ F ~ G ~ H ~ I
@@ -43,7 +43,7 @@ implicit def product9[P <: Product, A, B, C, D, E, F, G, H, I](implicit
 
 implicit def product10[P <: Product, A, B, C, D, E, F, G, H, I, J](implicit
     m: Mirror.ProductOf[P],
-    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I, J)
+    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I, J),
 ): Twiddler[P] { type Out = A ~ B ~ C ~ D ~ E ~ F ~ G ~ H ~ I ~ J } =
   new Twiddler[P]:
     type Out = A ~ B ~ C ~ D ~ E ~ F ~ G ~ H ~ I ~ J
@@ -56,7 +56,7 @@ implicit def product10[P <: Product, A, B, C, D, E, F, G, H, I, J](implicit
 
 implicit def product11[P <: Product, A, B, C, D, E, F, G, H, I, J, K](implicit
     m: Mirror.ProductOf[P],
-    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I, J, K)
+    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I, J, K),
 ): Twiddler[P] { type Out = A ~ B ~ C ~ D ~ E ~ F ~ G ~ H ~ I ~ J ~ K } =
   new Twiddler[P]:
     type Out = A ~ B ~ C ~ D ~ E ~ F ~ G ~ H ~ I ~ J ~ K
@@ -70,7 +70,7 @@ implicit def product11[P <: Product, A, B, C, D, E, F, G, H, I, J, K](implicit
 implicit def product12[P <: Product, A, B, C, D, E, F, G, H, I, J, K, L](
     implicit
     m: Mirror.ProductOf[P],
-    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I, J, K, L)
+    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I, J, K, L),
 ): Twiddler[P] { type Out = A ~ B ~ C ~ D ~ E ~ F ~ G ~ H ~ I ~ J ~ K ~ L } =
   new Twiddler[P]:
     type Out = A ~ B ~ C ~ D ~ E ~ F ~ G ~ H ~ I ~ J ~ K ~ L
@@ -85,7 +85,7 @@ implicit def product12[P <: Product, A, B, C, D, E, F, G, H, I, J, K, L](
 implicit def product13[P <: Product, A, B, C, D, E, F, G, H, I, J, K, L, Q](
     implicit
     m: Mirror.ProductOf[P],
-    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I, J, K, L, Q)
+    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I, J, K, L, Q),
 ): Twiddler[P] {
   type Out = A ~ B ~ C ~ D ~ E ~ F ~ G ~ H ~ I ~ J ~ K ~ L ~ Q
 } =
@@ -101,7 +101,7 @@ implicit def product13[P <: Product, A, B, C, D, E, F, G, H, I, J, K, L, Q](
 implicit def product14[P <: Product, A, B, C, D, E, F, G, H, I, J, K, L, Q, R](
     implicit
     m: Mirror.ProductOf[P],
-    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I, J, K, L, Q, R)
+    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I, J, K, L, Q, R),
 ): Twiddler[P] {
   type Out = A ~ B ~ C ~ D ~ E ~ F ~ G ~ H ~ I ~ J ~ K ~ L ~ Q ~ R
 } =
@@ -130,10 +130,10 @@ implicit def product15[
     L,
     Q,
     R,
-    S
+    S,
 ](implicit
     m: Mirror.ProductOf[P],
-    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I, J, K, L, Q, R, S)
+    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I, J, K, L, Q, R, S),
 ): Twiddler[P] {
   type Out = A ~ B ~ C ~ D ~ E ~ F ~ G ~ H ~ I ~ J ~ K ~ L ~ Q ~ R ~ S
 } =
@@ -163,10 +163,10 @@ implicit def product16[
     Q,
     R,
     S,
-    T
+    T,
 ](implicit
     m: Mirror.ProductOf[P],
-    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I, J, K, L, Q, R, S, T)
+    i: m.MirroredElemTypes =:= (A, B, C, D, E, F, G, H, I, J, K, L, Q, R, S, T),
 ): Twiddler[P] {
   type Out = A ~ B ~ C ~ D ~ E ~ F ~ G ~ H ~ I ~ J ~ K ~ L ~ Q ~ R ~ S ~ T
 } =

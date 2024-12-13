@@ -1,10 +1,10 @@
 package frontend
 
-import com.raquo.laminar.api.L.*
-
-import jobby.spec.*
-import com.raquo.waypoint.Router
 import java.text.DecimalFormat
+
+import com.raquo.laminar.api.L.*
+import com.raquo.waypoint.Router
+import jobby.spec.*
 
 case class JobListing private (node: Node)
 
@@ -24,7 +24,7 @@ object JobListing:
       companyId: CompanyId,
       companyName: CompanyName,
       allowDelete: Boolean = false,
-      onDelete: Job => Unit = _ => ()
+      onDelete: Job => Unit = _ => (),
   )(using Router[Page]): JobListing =
     import job.attributes.*
 
@@ -41,12 +41,12 @@ object JobListing:
             onClick.preventDefault --> { _ =>
               val sure =
                 org.scalajs.dom.window.confirm(
-                  s"Are you sure you want to delete ${job.attributes.title}?"
+                  s"Are you sure you want to delete ${job.attributes.title}?",
                 )
 
               if sure then onDelete(job)
-            }
-          )
+            },
+          ),
         )
       }
 
@@ -54,19 +54,19 @@ object JobListing:
       Styles.jobListing.container,
       h3(
         a(href := url.value, title.value, Styles.jobListing.title),
-        deleteLink
+        deleteLink,
       ),
       "at ",
       a(
         Styles.company.nameUrl,
         navigateTo(Page.CompanyPage(companyId)),
-        companyName.value
+        companyName.value,
       ),
       p(Styles.jobListing.description, code(description.value)),
       p(
         Styles.jobListing.salaryRange,
-        s"$cur${format(range.min.value)} - $cur${format(range.max.value)}"
-      )
+        s"$cur${format(range.min.value)} - $cur${format(range.max.value)}",
+      ),
     )
 
     JobListing(node)

@@ -26,7 +26,7 @@ case class GetCredentials(login: UserLogin)
       sql"""
         select user_id, salted_hash 
         from users where lower(login) = lower($userLogin)
-      """.query(userId *: hashedPassword)
+      """.query(userId *: hashedPassword),
     )
 
 case class CreateUser(login: UserLogin, password: HashedPassword)
@@ -37,7 +37,7 @@ case class CreateUser(login: UserLogin, password: HashedPassword)
           users (user_id, login, salted_hash) 
           values (gen_random_uuid(), lower($userLogin), $hashedPassword)
         returning user_id
-      """.query(userId)
+      """.query(userId),
     )
 
 // company ops
@@ -48,7 +48,7 @@ case class GetCompanyById(login: CompanyId)
       sql"""
         select company_id, owner_id, name, description, url from companies 
         where company_id = $companyId
-      """.query(company)
+      """.query(company),
     )
 
 case class DeleteCompanyById(company: CompanyId, user: UserId)
@@ -57,7 +57,7 @@ case class DeleteCompanyById(company: CompanyId, user: UserId)
       sql"""
         delete from companies where company_id = $companyId and owner_id = $userId
         returning 'ok'::varchar
-      """.query(varchar)
+      """.query(varchar),
     )
 
 case class DeleteJobById(id: JobId)
@@ -66,7 +66,7 @@ case class DeleteJobById(id: JobId)
       sql"""
         delete from jobs where job_id = $jobId
         returning 'ok'::varchar
-      """.query(varchar)
+      """.query(varchar),
     )
 
 case class CreateCompany(userId: UserId, attributes: CompanyAttributes)
@@ -78,7 +78,7 @@ case class CreateCompany(userId: UserId, attributes: CompanyAttributes)
         values(gen_random_uuid(), ${codecs.userId}, $companyAttributes)
         on conflict do nothing
         returning company_id
-      """.query(companyId)
+      """.query(companyId),
     )
 end CreateCompany
 
@@ -88,7 +88,7 @@ case class ListUserCompanies(user: UserId)
       sql"""
         select company_id, owner_id, name, description, url from companies
         where owner_id = $userId
-      """.query(company)
+      """.query(company),
     )
 
 // // job ops
@@ -102,20 +102,20 @@ case class GetJob(id: JobId)
         from jobs 
         where 
           job_id = $jobId
-      """.query(job)
+      """.query(job),
     )
 
 case class CreateJob(
     company: CompanyId,
     attributes: JobAttributes,
-    jobAdded: JobAdded
+    jobAdded: JobAdded,
 ) extends SqlQuery(
       (company, attributes, jobAdded),
       sql"""
         insert into jobs(job_id, company_id, job_title, job_description, job_url, min_salary, max_salary, currency, added)
         values          (gen_random_uuid(), $companyId, $jobAttributes, $added)
         returning job_id
-      """.query(jobId)
+      """.query(jobId),
     )
 
 case object LatestJobs
@@ -133,7 +133,7 @@ case object LatestJobs
         currency,
         added
       from jobs order by added desc limit 20
-  """.query(job)
+  """.query(job),
     )
 
 case class ListJobs(company: CompanyId)
@@ -151,5 +151,5 @@ case class ListJobs(company: CompanyId)
         currency,
         added
       from jobs where company_id = $companyId
-  """.query(job)
+  """.query(job),
     )

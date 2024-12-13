@@ -1,9 +1,8 @@
 package jobby
 package tests
 
-import jobby.spec.*
 import cats.effect.IO
-import org.http4s.ResponseCookie
+import jobby.spec.*
 
 trait UsersSuite:
   self: JobbySuite =>
@@ -18,7 +17,7 @@ trait UsersSuite:
 
       refreshCookie <- IO
         .fromOption(resp.cookie)(
-          new Exception("Expected a refresh cookie ")
+          new Exception("Expected a refresh cookie "),
         )
         .map(_.value)
       accessToken  = resp.access_token.value
@@ -47,7 +46,7 @@ trait UsersSuite:
     yield expect.all(
       wrongLogin.isLeft,
       wrongPass.isLeft,
-      everythingWrong.isLeft
+      everythingWrong.isLeft,
     )
     end for
   }

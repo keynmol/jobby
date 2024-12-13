@@ -5,7 +5,7 @@ import jobby.spec.*
 
 case class CreateCompanyForm private (
     node: Node,
-    stream: Signal[CompanyAttributes]
+    stream: Signal[CompanyAttributes],
 )
 
 object CreateCompanyForm:
@@ -14,15 +14,15 @@ object CreateCompanyForm:
       CompanyAttributes(
         name = CompanyName(""),
         description = CompanyDescription(""),
-        url = CompanyUrl("")
-      )
+        url = CompanyUrl(""),
+      ),
     )
 
     val nameWriter =
       stateVar.updater[String]((s, n) => s.copy(name = CompanyName(n)))
 
     val descriptionWriter = stateVar.updater[String]((s, n) =>
-      s.copy(description = CompanyDescription(n))
+      s.copy(description = CompanyDescription(n)),
     )
 
     val urlWriter =
@@ -40,9 +40,9 @@ object CreateCompanyForm:
               idAttr := "input-company-name",
               controlled(
                 value <-- stateVar.signal.map(_.name.value),
-                onInput.mapToValue --> nameWriter
-              )
-            )
+                onInput.mapToValue --> nameWriter,
+              ),
+            ),
           ),
           inputGroup(
             "description",
@@ -51,9 +51,9 @@ object CreateCompanyForm:
               rows   := 15,
               controlled(
                 value <-- stateVar.signal.map(_.description.value),
-                onInput.mapToValue --> descriptionWriter
-              )
-            )
+                onInput.mapToValue --> descriptionWriter,
+              ),
+            ),
           ),
           inputGroup(
             "url",
@@ -61,17 +61,17 @@ object CreateCompanyForm:
               idAttr := "input-company-url",
               controlled(
                 value <-- stateVar.signal.map(_.url.value),
-                onInput.mapToValue --> urlWriter
-              )
-            )
+                onInput.mapToValue --> urlWriter,
+              ),
+            ),
           ),
           button(
             tpe    := "submit",
             idAttr := "input-company-submit",
             "Create",
-            Styles.form.submit
-          )
-        )
+            Styles.form.submit,
+          ),
+        ),
       )
 
     new CreateCompanyForm(node, stateVar.signal)

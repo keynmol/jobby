@@ -1,25 +1,26 @@
 package jobby
 
+import scala.concurrent.duration.*
+
 import cats.effect.IO
 import com.comcast.ip4s.Host
 import com.comcast.ip4s.Port
 import pdi.jwt.JwtAlgorithm
 import pdi.jwt.algorithms.JwtHmacAlgorithm
-import scala.concurrent.duration.*
 
 case class AppConfig(
     postgres: PgCredentials,
     skunk: SkunkConfig,
     http: HttpConfig,
     jwt: JwtConfig,
-    misc: MiscConfig
+    misc: MiscConfig,
 )
 
 object AppConfig:
   def load(
       env: Map[String, String],
       cliArgs: List[String],
-      opts: Map[String, String] = Map.empty
+      opts: Map[String, String] = Map.empty,
   ) =
 
     val envWithFallback =
@@ -42,7 +43,7 @@ object AppConfig:
     val skunkConfig = SkunkConfig(
       maxSessions = 16,
       strategy = skunk.Strategy.SearchPath,
-      debug = false
+      debug = false,
     )
 
     val http = HttpConfig.fromCliArguments(cliArgs, envWithFallback)
@@ -60,11 +61,11 @@ object AppConfig:
         case JWT.Kind.AccessToken  => 15.minutes
         case JWT.Kind.RefreshToken => 14.days
       },
-      { case _ => "urn:jobby:auth" }
+      { case _ => "urn:jobby:auth" },
     )
 
     val misc = MiscConfig(
-      latestJobs = 20
+      latestJobs = 20,
     )
 
     IO {
@@ -78,11 +79,11 @@ case class JwtConfig(
     algorithm: JwtHmacAlgorithm,
     audience: JWT.Kind => String,
     expiration: JWT.Kind => FiniteDuration,
-    issuer: JWT.Kind => String
+    issuer: JWT.Kind => String,
 )
 
 case class MiscConfig(
-    latestJobs: Int = 20
+    latestJobs: Int = 20,
 )
 
 enum Deployment:
@@ -93,7 +94,7 @@ object HttpConfig:
   import com.comcast.ip4s.*
   def fromCliArguments(
       args: List[String],
-      env: Map[String, String] = Map.empty
+      env: Map[String, String] = Map.empty,
   ) =
     HttpConfig(
       port = args.headOption
@@ -105,14 +106,14 @@ object HttpConfig:
         .get("LOCAL_DEPLOYMENT")
         .filter(_ == "true")
         .map(_ => Deployment.Local)
-        .getOrElse(Deployment.Live)
+        .getOrElse(Deployment.Live),
     )
 end HttpConfig
 
 case class SkunkConfig(
     maxSessions: Int,
     strategy: skunk.Strategy,
-    debug: Boolean
+    debug: Boolean,
 )
 
 case class PgCredentials(
@@ -121,7 +122,7 @@ case class PgCredentials(
     user: String,
     database: String,
     password: Option[String],
-    ssl: Boolean
+    ssl: Boolean,
 )
 
 object PgCredentials:
@@ -132,6 +133,6 @@ object PgCredentials:
       user = mp.getOrElse("PG_USER", "postgres"),
       database = mp.getOrElse("PG_DB", "postgres"),
       password = mp.get("PG_PASSWORD"),
-      ssl = false
+      ssl = false,
     )
 end PgCredentials

@@ -2,8 +2,6 @@ package jobby
 package tests
 
 import jobby.spec.*
-import cats.effect.IO
-import cats.syntax.all.*
 
 trait JobsSuite:
   self: JobbySuite =>
@@ -22,7 +20,7 @@ trait JobsSuite:
         api.jobs.createJob(
           authHeader,
           companyId,
-          attributes
+          attributes,
         )
 
       byCompanyOwner <- create(companyOwner, companyId)
@@ -32,7 +30,7 @@ trait JobsSuite:
     yield expect.all(
       byRando == Left(ForbiddenError()),
       wrongCompany == Left(ForbiddenError()),
-      withoutAuth == Left(UnauthorizedError())
+      withoutAuth == Left(UnauthorizedError()),
     )
     end for
   }
@@ -51,7 +49,7 @@ trait JobsSuite:
         api.jobs.createJob(
           authHeader,
           companyId,
-          attributes
+          attributes,
         )
 
       bumBook_Job1 <- createJob(bumBook_Owner, BumBook_Inc)
@@ -74,7 +72,7 @@ trait JobsSuite:
     yield expect.all(
       nope == Left(ForbiddenError()),
       nope2 == Left(ForbiddenError()),
-      nope3 == Left(UnauthorizedError())
+      nope3 == Left(UnauthorizedError()),
     )
     end for
   }
@@ -90,7 +88,7 @@ trait JobsSuite:
       createJob = api.jobs.createJob(
         companyOwner,
         companyId,
-        attributes
+        attributes,
       )
       _ <- createJob.replicateA_(probe.config.misc.latestJobs * 2)
 
@@ -98,7 +96,7 @@ trait JobsSuite:
       sorted = jobs.sortBy(_.added.value.epochSecond).reverse
     yield expect.all(
       jobs.length == config.misc.latestJobs,
-      sorted == jobs
+      sorted == jobs,
     )
     end for
   }

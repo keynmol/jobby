@@ -2,7 +2,7 @@ import sbt.VirtualAxis
 
 sealed abstract class BuildStyle(
     val idSuffix: String,
-    val directorySuffix: String
+    val directorySuffix: String,
 ) extends VirtualAxis.WeakAxis
     with Product
     with Serializable

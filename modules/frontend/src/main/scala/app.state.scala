@@ -1,12 +1,12 @@
 package frontend
 
-import com.raquo.laminar.api.L.*
-import org.scalajs.dom
-import jobby.spec.AuthHeader
 import scala.scalajs.js.Date
-import com.raquo.airstream.state.StrictSignal
-import com.raquo.airstream.core.Signal
+
 import com.raquo.airstream.core.Observer
+import com.raquo.airstream.core.Signal
+import com.raquo.airstream.state.StrictSignal
+import com.raquo.laminar.api.L.*
+import jobby.spec.AuthHeader
 
 enum AuthState:
   case Unauthenticated
@@ -14,7 +14,7 @@ enum AuthState:
 
 class AppState private (
     _authToken: Var[Option[AuthState]],
-    val events: EventBus[AuthEvent]
+    val events: EventBus[AuthEvent],
 ):
   val $token: StrictSignal[Option[AuthState]] = _authToken.signal
 
@@ -35,7 +35,7 @@ object AppState:
   def init: AppState =
     AppState(
       _authToken = Var(None),
-      events = EventBus[AuthEvent]()
+      events = EventBus[AuthEvent](),
     )
 
 end AppState

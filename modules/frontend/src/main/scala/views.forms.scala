@@ -6,5 +6,5 @@ def inputGroup(name: String, el: HtmlElement) =
   div(
     Styles.form.inputGroup,
     label(name, Styles.form.inputLabel),
-    el.amend(Styles.form.inputField)
+    el.amend(Styles.form.inputField),
   )

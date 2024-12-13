@@ -1,26 +1,26 @@
 package frontend
 
-import com.raquo.laminar.api.L.*
-
-import jobby.spec.*
 import java.util.UUID
-import smithy4s.Newtype
+
+import com.raquo.laminar.api.L.*
+import jobby.spec.*
 import monocle.Lens
+import smithy4s.Newtype
 
 case class CreateJob(
     companyId: Option[CompanyId] = None,
-    attributes: JobAttributes
+    attributes: JobAttributes,
 )
 
 case class CreateJobListingForm private (
     node: Node,
-    stream: Signal[CreateJob]
+    stream: Signal[CreateJob],
 )
 
 object CreateJobListingForm:
   def apply(submit: Observer[CreateJob], error: Signal[Option[String]])(using
       api: Api,
-      appState: AppState
+      appState: AppState,
   ) =
     val stateVar = Var(
       CreateJob(
@@ -32,10 +32,10 @@ object CreateJobListingForm:
           range = SalaryRange(
             min = MinSalary(30000),
             max = MaxSalary(100000),
-            currency = Currency.GBP
-          )
-        )
-      )
+            currency = Currency.GBP,
+          ),
+        ),
+      ),
     )
     import monocle.syntax.all.*
 
@@ -54,11 +54,11 @@ object CreateJobListingForm:
 
     def controlledNT(
         nt: Newtype[String],
-        f: CreateJob => Lens[CreateJob, nt.Type]
+        f: CreateJob => Lens[CreateJob, nt.Type],
     ) =
       controlled(
         value <-- stateVar.signal.map(cj => f(cj).get(cj).value),
-        onInput.mapToValue --> writerNT(nt, f)
+        onInput.mapToValue --> writerNT(nt, f),
       )
 
     val currencyToggles = Currency.values.map { c =>
@@ -71,19 +71,20 @@ object CreateJobListingForm:
           .map(_.attributes.range.currency == c)
           .map(Styles.jobListing.currencyButton)
           .map(_.className.value),
-        onClick.mapTo(c) --> writer(_.focus(_.attributes.range.currency).optic)
+        onClick.mapTo(c) --> writer(_.focus(_.attributes.range.currency).optic),
       )
     }
 
-    val myCompanies = appState.$authHeader.flatMap {
-      case None => Signal.fromValue(List.empty)
-      case Some(tok) =>
-        api
-          .stream(_.companies.myCompanies(tok))
-          .map(_.companies)
-          .map(_.map(company => company.attributes.name.value -> company.id))
-          .startWith(List.empty)
-    }
+    val myCompanies =
+      appState.$authHeader.flatMapSwitch {
+        case None => Signal.fromValue(List.empty)
+        case Some(tok) =>
+          api
+            .stream(_.companies.myCompanies(tok))
+            .map(_.companies)
+            .map(_.map(company => company.attributes.name.value -> company.id))
+            .startWith(List.empty)
+      }
 
     val companySelector =
       select(
@@ -93,7 +94,7 @@ object CreateJobListingForm:
         onChange.mapToValue
           .map(UUID.fromString)
           .map(CompanyId.apply)
-          .map(Option.apply) --> writer(_.focus(_.companyId).optic)
+          .map(Option.apply) --> writer(_.focus(_.companyId).optic),
       )
 
     val node = div(
@@ -102,7 +103,7 @@ object CreateJobListingForm:
         Styles.form.container,
         onSubmit.preventDefault.mapTo(stateVar.now()) --> submit,
         myCompanies.map(
-          _.headOption.map(_._2)
+          _.headOption.map(_._2),
         ) --> writer(_.focus(_.companyId).optic),
         inputGroup("company", companySelector),
         inputGroup(
@@ -110,18 +111,18 @@ object CreateJobListingForm:
           input(
             controlledNT(
               JobTitle,
-              _.focus(_.attributes.title).optic
-            )
-          )
+              _.focus(_.attributes.title).optic,
+            ),
+          ),
         ),
         inputGroup(
           "url",
           input(
             controlledNT(
               JobUrl,
-              _.focus(_.attributes.url).optic
-            )
-          )
+              _.focus(_.attributes.url).optic,
+            ),
+          ),
         ),
         inputGroup(
           "description",
@@ -129,9 +130,9 @@ object CreateJobListingForm:
             rows := 5,
             controlledNT(
               JobDescription,
-              _.focus(_.attributes.description).optic
-            )
-          )
+              _.focus(_.attributes.description).optic,
+            ),
+          ),
         ),
         inputGroup(
           "minimum salary",
@@ -141,24 +142,24 @@ object CreateJobListingForm:
               tpe     := "range",
               minAttr := "30000",
               maxAttr <-- stateVar.signal.map(
-                _.attributes.range.max.value.toString
+                _.attributes.range.max.value.toString,
               ),
               value    := "60000",
               stepAttr := "1000",
               onInput.mapToValue.map(_.toInt) --> writerNT(
                 MinSalary,
-                _.focus(_.attributes.range.min).optic
-              )
+                _.focus(_.attributes.range.min).optic,
+              ),
             ),
             p(
               textAlign := "center",
               child.text <-- stateVar.signal
                 .map(
-                  _.attributes.range.min.value
+                  _.attributes.range.min.value,
                 )
-                .map(format)
-            )
-          )
+                .map(format),
+            ),
+          ),
         ),
         inputGroup(
           "maximum salary",
@@ -167,33 +168,33 @@ object CreateJobListingForm:
               Styles.form.inputField,
               tpe := "range",
               minAttr <-- stateVar.signal.map(
-                _.attributes.range.min.value.toString
+                _.attributes.range.min.value.toString,
               ),
               maxAttr  := "250000",
               value    := "100000",
               stepAttr := "1000",
               onInput.mapToValue.map(_.toInt) --> writerNT(
                 MaxSalary,
-                _.focus(_.attributes.range.max).optic
-              )
+                _.focus(_.attributes.range.max).optic,
+              ),
             ),
             p(
               textAlign := "center",
               child.text <-- stateVar.signal
                 .map(
-                  _.attributes.range.max.value
+                  _.attributes.range.max.value,
                 )
-                .map(format)
-            )
-          )
+                .map(format),
+            ),
+          ),
         ),
         inputGroup("", p(textAlign := "center", currencyToggles)),
         button(
           Styles.form.submit,
           tpe := "submit",
-          "Add"
-        )
-      )
+          "Add",
+        ),
+      ),
     )
 
     new CreateJobListingForm(node, stateVar.signal)

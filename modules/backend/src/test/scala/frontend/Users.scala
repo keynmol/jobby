@@ -2,21 +2,15 @@ package jobby
 package tests
 package frontend
 
-import scala.concurrent.duration.*
-import com.indoorvivants.weaver.playwright.*
-
-import org.http4s.*
-
-import org.typelevel.otel4s.trace.Tracer.Implicits.noop
 import cats.syntax.all.*
-import weaver.*
-import cats.effect.*
-import java.nio.file.Paths
+import com.indoorvivants.weaver.playwright.*
 import jobby.spec.*
+import org.http4s.*
+import weaver.*
 
 case class Resources(
     probe: Probe,
-    pw: PlaywrightRuntime
+    pw: PlaywrightRuntime,
 )
 
 class UsersSpec(global: GlobalRead) extends FrontendSuite(global):
@@ -56,7 +50,7 @@ class UsersSpec(global: GlobalRead) extends FrontendSuite(global):
   }
 
   frontendTest("add company and render its page") { (probe, pc, pf) =>
-    import pc.*, probe.*, pf.*
+    import pc.*, pf.*
     val frg = Fragments(probe)
 
     for
@@ -82,7 +76,7 @@ class UsersSpec(global: GlobalRead) extends FrontendSuite(global):
         expect(path.segments.size == 2) &&
         expect(path.segments.headOption.exists(_.encoded == "company"))
       }.whenA(
-        !sys.env.contains("CI")
+        !sys.env.contains("CI"),
       ) // for some reason redirects don't get registered in headless mode on CI
 
       name <- locator("#company-profile-name").map(_.innerText())
@@ -93,7 +87,7 @@ class UsersSpec(global: GlobalRead) extends FrontendSuite(global):
       .all(
         name == attributes.name.value,
         url == attributes.url.value,
-        description == attributes.description.value
+        description == attributes.description.value,
       )
     end for
   }

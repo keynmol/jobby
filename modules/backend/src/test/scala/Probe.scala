@@ -2,15 +2,10 @@ package jobby
 package tests
 
 import cats.effect.*
-
 import org.http4s.Uri
 import org.http4s.client.Client
-import scribe.cats.*
-import scribe.handler.FunctionalLogHandler
-import cats.effect.std.Dispatcher
 import scribe.LogRecord
-import scribe.handler.LogHandler
-import scribe.Level
+import scribe.cats.*
 
 case class Probe(
     api: Api,
@@ -18,7 +13,7 @@ case class Probe(
     serverUri: Uri,
     gen: Generator,
     config: AppConfig,
-    getLogs: IO[Vector[LogRecord]]
+    getLogs: IO[Vector[LogRecord]],
 ):
   def fragments = Fragments(this)
 end Probe
@@ -28,7 +23,7 @@ object Probe:
       client: Client[IO],
       uri: Uri,
       config: AppConfig,
-      logger: InMemoryLogger
+      logger: InMemoryLogger,
   ) =
     Resource.eval {
       for
@@ -36,7 +31,7 @@ object Probe:
         api <- Api.build(client, uri)
         auth = HttpAuth(
           config.jwt,
-          logger.scribeLogger
+          logger.scribeLogger,
         )
       yield Probe(api, auth, uri, gen, config, logger.logs)
     }

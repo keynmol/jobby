@@ -1,6 +1,7 @@
 package jobby
 
 import java.util.Base64
+
 import scala.util.Try
 import scala.util.control.NonFatal
 
@@ -15,7 +16,7 @@ class PlatformShLoader(env: Map[String, String]):
             scribe.error("Failed to parse PLATFORM_RELATIONSHIPS", error)
             Option.empty
           },
-          Option.apply
+          Option.apply,
         )
     }
 
@@ -31,8 +32,8 @@ class PlatformShLoader(env: Map[String, String]):
             user = db("username").str,
             database = db("path").str,
             password = Some(db("password").str),
-            ssl = false
-          )
+            ssl = false,
+          ),
         )
       catch
         case exc =>

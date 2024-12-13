@@ -1,20 +1,14 @@
 package jobby
 
 import cats.effect.*
-import skunk.*
-import cats.implicits.*
-import skunk.*
-import skunk.implicits.*
-import skunk.codec.all.*
-import jobby.spec.*
-import smithy4s.Newtype
-import database.codecs.*
-import database.operations.*
 import org.typelevel.otel4s.trace.Tracer
+import skunk.*
+
+import database.operations.*
 
 object SkunkDatabase:
   def load(postgres: PgCredentials, skunkConfig: SkunkConfig)(using
-      Tracer[IO]
+      Tracer[IO],
   ): Resource[IO, Database] =
     Session
       .pooled[IO](
@@ -26,7 +20,7 @@ object SkunkDatabase:
         strategy = skunkConfig.strategy,
         max = skunkConfig.maxSessions,
         debug = skunkConfig.debug,
-        ssl = if postgres.ssl then skunk.SSL.Trusted else skunk.SSL.None
+        ssl = if postgres.ssl then skunk.SSL.Trusted else skunk.SSL.None,
       )
       .map(SkunkDatabase(_))
   end load

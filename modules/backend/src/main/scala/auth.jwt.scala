@@ -1,17 +1,19 @@
 package jobby
 
-import jobby.spec.*
 import java.util.UUID
-import scala.util.Try
+
 import scala.util.Failure
 import scala.util.Success
+import scala.util.Try
+
+import jobby.spec.*
 
 object JWT:
   enum Kind:
     case AccessToken, RefreshToken
 
   import java.time.Instant
-  import pdi.jwt.{JwtUpickle, JwtAlgorithm, JwtClaim}
+  import pdi.jwt.{JwtUpickle, JwtClaim}
 
   def create(kind: Kind, userId: UserId, config: JwtConfig) =
     val claim = JwtClaim(
@@ -19,11 +21,11 @@ object JWT:
       expiration = Some(
         Instant.now
           .plusSeconds(config.expiration(kind).toSeconds)
-          .getEpochSecond
+          .getEpochSecond,
       ),
       issuedAt = Some(Instant.now.getEpochSecond),
       audience = Option(Set(config.audience(kind))),
-      subject = Option(userId.value.toString)
+      subject = Option(userId.value.toString),
     )
 
     JwtUpickle.encode(claim, config.secretKey.plaintext, config.algorithm)
@@ -38,7 +40,7 @@ object JWT:
         if aud == expected then Success(claim)
         else
           Failure(
-            new Exception(s"Audience: $aud didn't match expected: $expected")
+            new Exception(s"Audience: $aud didn't match expected: $expected"),
           )
       }
       .flatMap { claim =>

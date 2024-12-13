@@ -1,15 +1,16 @@
 package frontend
 
-import jobby.spec.*
+import java.util.UUID
+
+import scala.scalajs.js.JSON
+
 import com.raquo.laminar.api.L
 import com.raquo.laminar.api.L.*
 import com.raquo.waypoint.*
-import java.util.UUID
-
-import io.circe.{*, given}
+import io.circe.*
 import io.circe.syntax.*
+import jobby.spec.*
 import smithy4s.Newtype
-import scala.scalajs.js.JSON
 
 def codec[A: Decoder: Encoder](nt: Newtype[A]): Codec[nt.Type] =
   val decT = summon[Decoder[A]].map(nt.apply)
@@ -47,42 +48,42 @@ object Page:
   val companyPageRoute = Route(
     encode = (stp: CompanyPage) => stp.id.toString,
     decode = (arg: String) => CompanyPage(CompanyId(UUID.fromString(arg))),
-    pattern = root / "company" / segment[String] / endOfSegments
+    pattern = root / "company" / segment[String] / endOfSegments,
   )
 
   val jobPageRoute = Route(
     encode = (stp: JobPage) => stp.id.toString,
     decode = (arg: String) => JobPage(JobId(UUID.fromString(arg))),
-    pattern = root / "job" / segment[String] / endOfSegments
+    pattern = root / "job" / segment[String] / endOfSegments,
   )
 
-  val router = new Router[Page](
-    routes = List(
-      mainRoute,
-      profileRoute,
-      loginRoute,
-      registerRoute,
-      companyPageRoute,
-      jobPageRoute,
-      createCompanyRoute,
-      createJobRoute,
-      logoutRoute
-    ),
-    getPageTitle = {
-      case LatestJobs    => "Jobby: latest"
-      case Login         => "Jobby: login"
-      case Register      => "Jobby: register"
-      case CreateCompany => "Jobby: create company"
-      case CreateJob     => "Jobby: create vacancy"
-      case _             => "Jobby"
-    },
-    serializePage = pg => pg.asJson.noSpaces,
-    deserializePage = str =>
-      io.circe.scalajs.decodeJs[Page](JSON.parse(str)).fold(throw _, identity)
-  )(
-    popStateEvents = windowEvents(_.onPopState),
-    owner = L.unsafeWindowOwner
-  )
+  object router
+      extends Router[Page](
+        routes = List(
+          mainRoute,
+          profileRoute,
+          loginRoute,
+          registerRoute,
+          companyPageRoute,
+          jobPageRoute,
+          createCompanyRoute,
+          createJobRoute,
+          logoutRoute,
+        ),
+        getPageTitle = {
+          case LatestJobs    => "Jobby: latest"
+          case Login         => "Jobby: login"
+          case Register      => "Jobby: register"
+          case CreateCompany => "Jobby: create company"
+          case CreateJob     => "Jobby: create vacancy"
+          case _             => "Jobby"
+        },
+        serializePage = pg => pg.asJson.noSpaces,
+        deserializePage = str =>
+          io.circe.scalajs
+            .decodeJs[Page](JSON.parse(str))
+            .fold(throw _, identity),
+      )
 end Page
 
 def navigateTo(page: Page)(using router: Router[Page]): Binder[HtmlElement] =
@@ -95,7 +96,7 @@ def navigateTo(page: Page)(using router: Router[Page]): Binder[HtmlElement] =
 
     (onClick
       .filter(ev =>
-        !(isLinkElement && (ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.altKey))
+        !(isLinkElement && (ev.ctrlKey || ev.metaKey || ev.shiftKey || ev.altKey)),
       )
       .preventDefault
       --> (_ => redirectTo(page))).bind(el)

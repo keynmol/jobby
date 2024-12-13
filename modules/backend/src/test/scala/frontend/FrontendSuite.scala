@@ -2,16 +2,16 @@ package jobby
 package tests
 package frontend
 
+import java.nio.file.Paths
+
 import scala.concurrent.duration.*
-import com.indoorvivants.weaver.playwright.*
-import org.http4s.*
-import org.typelevel.otel4s.trace.Tracer.Implicits.noop
-import cats.syntax.all.*
+
 import cats.effect.*
-import weaver.*
+import com.indoorvivants.weaver.playwright.*
 import com.indoorvivants.weaver.playwright.BrowserConfig.Chromium
 import com.microsoft.playwright.BrowserType.LaunchOptions
-import java.nio.file.Paths
+import org.typelevel.otel4s.trace.Tracer.Implicits.noop
+import weaver.*
 
 abstract class FrontendSuite(global: GlobalRead)
     extends weaver.IOSuite
@@ -26,9 +26,9 @@ abstract class FrontendSuite(global: GlobalRead)
             Some(
               LaunchOptions()
                 .setHeadless(sys.env.contains("CI"))
-                .setSlowMo(sys.env.get("CI").map(_ => 0).getOrElse(1000))
-            )
-          )
+                .setSlowMo(sys.env.get("CI").map(_ => 0).getOrElse(1000)),
+            ),
+          ),
         )
         .map { pw =>
           Resources(pb, pw)
@@ -48,14 +48,14 @@ abstract class FrontendSuite(global: GlobalRead)
     pc.page(_.setDefaultTimeout(timeout.toMillis))
 
   def frontendTest(
-      name: TestName
+      name: TestName,
   )(f: (Probe, PageContext, PageFragments) => IO[Expectations]) =
     test(name) { (res, logs) =>
       getPageContext(res).evalTap(configure).use { pc =>
         def screenshot(pc: PageContext, name: String) =
           val path = Paths.get("playwright-screenshots", name + ".png")
           pc.screenshot(path) *> logs.info(
-            s"Screenshot of last known page state is saved at ${path.toAbsolutePath()}"
+            s"Screenshot of last known page state is saved at ${path.toAbsolutePath()}",
           )
 
         def testName = name.name.collect {

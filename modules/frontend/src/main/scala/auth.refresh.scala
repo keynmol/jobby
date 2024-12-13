@@ -1,25 +1,21 @@
 package frontend
 
+import scala.concurrent.duration.FiniteDuration
 import scala.scalajs.js.Date
 
 import cats.effect.IO
-import cats.syntax.all.*
-
-import jobby.spec.AuthHeader
-import jobby.spec.*
-
-import com.raquo.laminar.api.L.*
-import scala.concurrent.duration.FiniteDuration
 import com.raquo.airstream.core.EventStream
+import com.raquo.laminar.api.L.*
+import jobby.spec.*
 
 class AuthRefresh(bus: EventBus[AuthEvent], period: FiniteDuration)(using
     state: AppState,
-    api: Api
+    api: Api,
 ):
   def loop =
     eventSources
       .withCurrentValueOf(state.$token)
-      .flatMap {
+      .flatMapSwitch {
         case (_, None) => refresh
 
         case (AuthEvent.Reset, _) => logout
@@ -39,7 +35,7 @@ class AuthRefresh(bus: EventBus[AuthEvent], period: FiniteDuration)(using
           else EventStream.empty
       } --> state.tokenWriter
 
-  private def refresh =
+  private def refresh: EventStream[Option[AuthState]] =
     api
       .stream(
         _.users
@@ -53,7 +49,7 @@ class AuthRefresh(bus: EventBus[AuthEvent], period: FiniteDuration)(using
             api.users
               .refresh(None, logout = Some(true))
               .as(Some(AuthState.Unauthenticated))
-          }
+          },
       )
 
   private def logout: EventStream[Some[AuthState]] =
@@ -61,14 +57,14 @@ class AuthRefresh(bus: EventBus[AuthEvent], period: FiniteDuration)(using
       .stream(
         _.users
           .refresh(None, logout = Some(true))
-          .as(Some(AuthState.Unauthenticated))
+          .as(Some(AuthState.Unauthenticated)),
       )
 
   private val eventSources: EventStream[AuthEvent] = EventStream
     .merge(
       bus.events,
       EventStream.periodic(period.toMillis.toInt).mapTo(AuthEvent.Check),
-      state.$token.changes.collect { case None => AuthEvent.Reset }
+      state.$token.changes.collect { case None => AuthEvent.Reset },
     )
 
 end AuthRefresh

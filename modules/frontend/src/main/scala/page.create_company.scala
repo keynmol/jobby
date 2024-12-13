@@ -1,12 +1,11 @@
 package frontend
 package pages
 
-import views.*
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import com.raquo.laminar.api.L.*
-import jobby.spec.*
-import scala.concurrent.ExecutionContext.Implicits.global
 import com.raquo.waypoint.Router
+import jobby.spec.*
 
 def create_company(using state: AppState, api: Api, router: Router[Page]) =
   val error = Var(Option.empty[String])
@@ -20,9 +19,9 @@ def create_company(using state: AppState, api: Api, router: Router[Page]) =
             _.companies
               .createCompany(
                 auth = h,
-                attributes = cc
+                attributes = cc,
               )
-              .attempt
+              .attempt,
           )
           .collect {
             case Left(ValidationError(msg)) =>
@@ -35,6 +34,6 @@ def create_company(using state: AppState, api: Api, router: Router[Page]) =
   val createCompany = CreateCompanyForm(companyHandler, error.signal)
 
   div(
-    createCompany.node
+    createCompany.node,
   )
 end create_company

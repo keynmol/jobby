@@ -3,7 +3,6 @@ package tests
 
 import cats.effect.IO
 import cats.syntax.all.*
-
 import scribe.Level
 import weaver.*
 

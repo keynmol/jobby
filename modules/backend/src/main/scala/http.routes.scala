@@ -1,5 +1,7 @@
 package jobby
 
+import java.nio.file.Paths
+
 import cats.data.Kleisli
 import cats.effect.*
 import cats.implicits.*
@@ -11,13 +13,11 @@ import org.http4s.dsl.io.*
 import scribe.Scribe
 import smithy4s.http4s.SimpleRestJsonBuilder
 
-import java.nio.file.Paths
-
 def Routes(
     db: Database,
     config: AppConfig,
     logger: Scribe[IO],
-    timeCop: TimeCop
+    timeCop: TimeCop,
 ): Resource[IO, HttpApp[IO]] =
   def handleErrors(routes: HttpRoutes[IO]) =
     routes.orNotFound.onError { exc =>
@@ -50,7 +50,7 @@ object Static:
       .fromResource[IO](
         "index.html",
         None,
-        preferGzipped = true
+        preferGzipped = true,
       )
       .getOrElseF(NotFound())
 
@@ -61,7 +61,7 @@ object Static:
           .fromResource[IO](
             Paths.get("assets", filename).toString,
             Some(req),
-            preferGzipped = true
+            preferGzipped = true,
           )
           .getOrElseF(NotFound())
       case req @ GET -> Root        => indexHtml

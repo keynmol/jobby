@@ -3,22 +3,20 @@ package frontend
 import com.raquo.laminar.api.L.*
 import com.raquo.waypoint.Router
 
-import jobby.spec.*
-
 case class UserToolbar private (node: Node)
 
 object UserToolbar:
   def apply(using
       api: Api,
       state: AppState,
-      router: Router[Page]
+      router: Router[Page],
   ): UserToolbar =
     val logout =
       button(
         Styles.userToolbar.button,
         cls := "nav-link",
         "Logout",
-        navigateTo(Page.Logout)
+        navigateTo(Page.Logout),
       )
 
     val register =
@@ -26,7 +24,7 @@ object UserToolbar:
         Styles.userToolbar.button,
         cls := "nav-link",
         "Register",
-        navigateTo(Page.Register)
+        navigateTo(Page.Register),
       )
 
     val login =
@@ -34,7 +32,7 @@ object UserToolbar:
         Styles.userToolbar.button,
         cls := "nav-link",
         "Login",
-        navigateTo(Page.Login)
+        navigateTo(Page.Login),
       )
 
     val addJob =
@@ -42,7 +40,7 @@ object UserToolbar:
         Styles.userToolbar.button,
         cls := "nav-link",
         "Add a job",
-        navigateTo(Page.CreateJob)
+        navigateTo(Page.CreateJob),
       )
 
     val profile =
@@ -50,7 +48,7 @@ object UserToolbar:
         Styles.userToolbar.button,
         cls := "nav-link",
         "Profile",
-        navigateTo(Page.Profile)
+        navigateTo(Page.Profile),
       )
 
     val addCompany =
@@ -58,7 +56,7 @@ object UserToolbar:
         Styles.userToolbar.button,
         cls := "nav-link",
         "Add a company",
-        navigateTo(Page.CreateCompany)
+        navigateTo(Page.CreateCompany),
       )
 
     val buttons = state.$token.map {
@@ -70,7 +68,7 @@ object UserToolbar:
 
     val node = div(
       Styles.userToolbar.container,
-      children <-- buttons
+      children <-- buttons,
     )
 
     UserToolbar(node)

@@ -23,7 +23,7 @@ class HerokuLoader(env: Map[String, String]):
           user = userName,
           password = Some(password),
           database = dbName,
-          ssl = true
+          ssl = true,
         )
       }.toOption
 

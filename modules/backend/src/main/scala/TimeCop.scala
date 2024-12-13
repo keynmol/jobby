@@ -1,10 +1,11 @@
 package jobby
 
 import java.time.OffsetDateTime
-import cats.effect.IO
 import java.time.ZoneOffset
-import smithy4s.Timestamp
+
+import cats.effect.IO
 import smithy4s.Newtype
+import smithy4s.Timestamp
 
 trait TimeCop:
   def nowODT: IO[OffsetDateTime]

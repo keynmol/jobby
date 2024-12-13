@@ -4,29 +4,15 @@ package integration
 
 import cats.effect.IO
 import cats.effect.Resource
-import cats.syntax.all.*
 import com.dimafeng.testcontainers.PostgreSQLContainer
 import org.flywaydb.core.Flyway
-import org.http4s.Uri
+import org.http4s.HttpApp
 import org.http4s.blaze.client.*
-import org.http4s.client.Client
-import org.http4s.ember.client.*
+import org.http4s.blaze.server.*
 import org.testcontainers.utility.DockerImageName
+import org.typelevel.otel4s.trace.Tracer
 import pdi.jwt.JwtAlgorithm.HS256
 import skunk.util.Typer.Strategy
-import org.http4s.ember.server.EmberServerBuilder
-import scribe.cats.*
-import org.http4s.blaze.server.*
-import org.http4s.server.middleware.RequestLogger
-import org.http4s.HttpRoutes.apply
-import org.http4s.HttpRoutes
-import org.http4s.HttpApp
-import org.http4s.Status.apply
-import org.http4s.server.middleware.ResponseLogger.apply
-import org.http4s.server.middleware.ResponseLogger
-import org.http4s.Request
-import cats.effect.kernel.Ref
-import org.typelevel.otel4s.trace.Tracer
 
 object Fixture:
   private def parseJDBC(url: String) = IO(java.net.URI.create(url.substring(5)))
@@ -35,8 +21,8 @@ object Fixture:
     val start = IO(
       PostgreSQLContainer(
         dockerImageNameOverride = DockerImageName("postgres:14"),
-        mountPostgresDataToTmpfs = true
-      )
+        mountPostgresDataToTmpfs = true,
+      ),
     ).flatTap(cont => IO(cont.start()))
 
     Resource.make(start)(cont => IO(cont.stop()))
@@ -60,7 +46,7 @@ object Fixture:
           user = cont.username,
           password = Some(cont.password),
           database = cont.databaseName,
-          ssl = false
+          ssl = false,
         )
 
         SkunkDatabase
@@ -77,7 +63,7 @@ object Fixture:
         "org.flywaydb.core",
         "org.testcontainers",
         "🐳 [postgres:14]",
-        "🐳 [testcontainers/ryuk:0.3.3]"
+        "🐳 [testcontainers/ryuk:0.3.3]",
       )
 
     silenceOfTheLogs.foreach { log =>
@@ -96,7 +82,7 @@ object Fixture:
         appConfig,
         db,
         logger.scribeLogger,
-        timeCop
+        timeCop,
       ).routes
       latchedRoutes = HttpApp[IO] { case req =>
         shutdownLatch.get.flatMap { deadSkunk =>
@@ -104,9 +90,9 @@ object Fixture:
             IO.pure(
               org.http4s
                 .Response[IO](
-                  org.http4s.Status.InternalServerError
+                  org.http4s.Status.InternalServerError,
                 )
-                .withEntity("Skunk is dead, stop sending requests!")
+                .withEntity("Skunk is dead, stop sending requests!"),
             )
           else routes.run(req)
         }
@@ -118,14 +104,14 @@ object Fixture:
         .map(_.baseUri)
 
       client <- BlazeClientBuilder[IO].resource.onFinalize(
-        shutdownLatch.set(true)
+        shutdownLatch.set(true),
       )
       probe <-
         Probe.build(
           client,
           uri,
           appConfig,
-          logger
+          logger,
         )
     yield probe
     end for
@@ -138,13 +124,13 @@ object Fixture:
     HS256,
     _ => "jobby:token",
     _ => 5.minutes,
-    _ => "jobby:issuer"
+    _ => "jobby:issuer",
   )
 
   val skunk = SkunkConfig(
     maxSessions = 10,
     strategy = Strategy.SearchPath,
-    debug = false
+    debug = false,
   )
 
   import com.comcast.ip4s.*

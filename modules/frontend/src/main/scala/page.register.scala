@@ -1,13 +1,13 @@
 package frontend
 package pages
 
-import views.*
+import scala.concurrent.ExecutionContext.Implicits.global
 
 import com.raquo.laminar.api.L.*
-import jobby.spec.*
-import scala.scalajs.js.Date
-import scala.concurrent.ExecutionContext.Implicits.global
 import com.raquo.waypoint.Router
+import jobby.spec.*
+
+import views.*
 
 def register(using state: AppState, api: Api, router: Router[Page]) =
   val error = Var(Option.empty[String])
@@ -17,9 +17,9 @@ def register(using state: AppState, api: Api, router: Router[Page]) =
         _.users
           .register(
             login,
-            password
+            password,
           )
-          .attempt
+          .attempt,
       )
       .collect {
         case Left(ValidationError(msg)) =>
@@ -34,7 +34,7 @@ def register(using state: AppState, api: Api, router: Router[Page]) =
   div(
     guestOnly,
     h1(Styles.header, "Register"),
-    form
+    form,
   )
 
 end register
