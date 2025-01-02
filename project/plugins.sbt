@@ -1,6 +1,6 @@
 addSbtPlugin(
   "com.disneystreaming.smithy4s" % "smithy4s-sbt-codegen" % sys.env
-    .getOrElse("SMITHY_VERSION", "0.18.27"),
+    .getOrElse("SMITHY_VERSION", "0.18.28"),
 )
 
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.10.0")
