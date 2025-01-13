@@ -24,7 +24,7 @@ def migrate(postgres: PgCredentials) =
           case _: FlywayValidateException =>
             repair.redeemWith[Unit](
               ex => IO.raiseError(ex),
-              _ => migrate
+              _ => migrate,
             )
           case other => IO.raiseError(other)
         }
@@ -53,12 +53,12 @@ object Main extends IOApp:
 
     val props = fileProps
       .handleErrorWith(ex =>
-        logger.error("Failed to load `jobby.opts`", ex).as(Map.empty)
+        logger.error("Failed to load `jobby.opts`", ex).as(Map.empty),
       )
       .flatTap(mp =>
         logger.info(
-          s"Loaded from `jobby.opts`: $mp"
-        )
+          s"Loaded from `jobby.opts`: $mp",
+        ),
       )
 
     scribe.info(s"Args: $args")
@@ -69,7 +69,7 @@ object Main extends IOApp:
       .flatMap(JobbyApp.bootstrap(_, logger))
       .flatTap(app => migrate(app.config.postgres))
       .flatMap(jobbyApp =>
-        jobbyApp.routes.flatMap(Server(jobbyApp.config.http, _))
+        jobbyApp.routes.flatMap(Server(jobbyApp.config.http, _)),
       )
       .use(_ => IO.never)
   end run
