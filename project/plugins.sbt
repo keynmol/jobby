@@ -17,6 +17,6 @@ addSbtPlugin("org.scalameta" % "sbt-scalafmt" % "2.5.3")
 
 addSbtPlugin("com.armanbilge" % "sbt-bundlemon" % "0.1.4")
 
-addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.13.0")
+addSbtPlugin("ch.epfl.scala" % "sbt-scalafix" % "0.14.0")
 
 libraryDependencySchemes += "org.scala-lang.modules" %% "scala-xml" % VersionScheme.Always
