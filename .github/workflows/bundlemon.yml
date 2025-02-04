@@ -23,5 +23,7 @@ jobs:
           java-version: '17'
           cache: sbt
 
+      - uses: sbt/setup-sbt@v1
+
       - name: Monitor frontend bundle
         run: sbt --client frontend-bundle/bundleMon
