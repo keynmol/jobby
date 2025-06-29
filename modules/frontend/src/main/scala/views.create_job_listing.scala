@@ -54,7 +54,7 @@ object CreateJobListingForm:
 
     def controlledNT(
         nt: Newtype[String],
-        f: CreateJob => Lens[CreateJob, nt.Type],
+        f: CreateJob => Lens[CreateJob, nt.T],
     ) =
       controlled(
         value <-- stateVar.signal.map(cj => f(cj).get(cj).value),
