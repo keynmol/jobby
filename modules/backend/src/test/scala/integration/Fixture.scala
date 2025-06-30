@@ -13,6 +13,7 @@ import org.testcontainers.utility.DockerImageName
 import org.typelevel.otel4s.trace.Tracer
 import pdi.jwt.JwtAlgorithm.HS256
 import skunk.util.Typer.Strategy
+import org.testcontainers.containers.wait.strategy.Wait
 
 object Fixture:
   private def parseJDBC(url: String) = IO(java.net.URI.create(url.substring(5)))
@@ -22,7 +23,7 @@ object Fixture:
       PostgreSQLContainer(
         dockerImageNameOverride = DockerImageName("postgres:14"),
         mountPostgresDataToTmpfs = true,
-      ),
+      ).configure(_.waitingFor(Wait.forListeningPort())),
     ).flatTap(cont => IO(cont.start()))
 
     Resource.make(start)(cont => IO(cont.stop()))
