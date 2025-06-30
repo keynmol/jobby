@@ -1,6 +1,6 @@
 addSbtPlugin(
   "com.disneystreaming.smithy4s" % "smithy4s-sbt-codegen" % sys.env
-    .getOrElse("SMITHY_VERSION", "0.18.28"),
+    .getOrElse("SMITHY_VERSION", "0.18.38"),
 )
 
 addSbtPlugin("io.spray" % "sbt-revolver" % "0.10.0")
@@ -9,7 +9,7 @@ addSbtPlugin("com.github.sbt" % "sbt-native-packager" % "1.11.1")
 
 addSbtPlugin("com.eed3si9n" % "sbt-projectmatrix" % "0.10.1")
 
-addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.17.0")
+addSbtPlugin("org.scala-js" % "sbt-scalajs" % "1.19.0")
 
 addSbtPlugin("com.timushev.sbt" % "sbt-updates" % "0.6.4")
 

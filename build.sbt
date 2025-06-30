@@ -6,18 +6,18 @@ Global / onChangedBuildSource := ReloadOnSourceChanges
 val Versions = new {
   val http4sBlaze       = "0.23.17"
   val http4s            = "0.23.30"
-  val Scala             = "3.6.2"
-  val skunk             = "1.0.0-M8"
-  val upickle           = "3.3.1"
-  val scribe            = "3.16.0"
+  val Scala             = "3.7.1"
+  val skunk             = "1.1.0-M3"
+  val upickle           = "4.2.1"
+  val scribe            = "3.16.1"
   val http4sDom         = "0.2.11"
-  val jwt               = "10.0.1"
-  val FlywayPG          = "11.3.1"
-  val Postgres          = "42.7.5"
-  val TestContainers    = "0.41.5"
+  val jwt               = "11.0.0"
+  val FlywayPG          = "11.10.0"
+  val Postgres          = "42.7.7"
+  val TestContainers    = "0.43.0"
   val Weaver            = "0.8.4"
   val WeaverPlaywright  = "0.0.5"
-  val Laminar           = "17.2.0"
+  val Laminar           = "17.2.1"
   val waypoint          = "9.0.0"
   val scalacss          = "1.0.0"
   val monocle           = "3.3.0"
@@ -139,7 +139,7 @@ lazy val shared = projectMatrix
     scalacSettings,
     libraryDependencies ++= Seq(
       "com.disneystreaming.smithy4s" %%% "smithy4s-http4s" % smithy4sVersion.value,
-      "com.indoorvivants" %%% "scala-uri" % "4.1.0",
+      "com.indoorvivants" %%% "scala-uri" % "4.2.0",
     ),
     Compile / doc / sources := Seq.empty,
   )
